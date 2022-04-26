@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace FashionRecycle.API.Core.Entity
 {
-    public class RoleEntity : BaseEntity
+    public class PaymenyTypeEntity : BaseEntity
     {
-        public string? Description { get; set;}        
+        public string? Description { get; set; }
+        public bool Active { get; set; }
     }
 }

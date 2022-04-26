@@ -22,10 +22,11 @@ namespace FashionRecycle.API.Controllers
         {
             return Ok();
         }
-        
+
+        [AllowAnonymous]
         [HttpPost("createUser")]
         public IActionResult CreateUser(CreateUserInputModel createUserInputModel)
-        {
+                {
             try
             {
                 _userBusiness.CreateUser(createUserInputModel);
