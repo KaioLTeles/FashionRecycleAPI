@@ -23,6 +23,7 @@ jobs:
           include-prerelease: true
 
       - name: Build with dotnet
+        run: cd FashionRecycle.API
         run: dotnet build --configuration Release
 
       - name: dotnet publish
