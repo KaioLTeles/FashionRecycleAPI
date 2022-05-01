@@ -52,6 +52,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: "ApiFashion"
-          slot-name: "Development"
+          slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CB9F05C964294AE59B487574F5D487F1 }}
           package: .
