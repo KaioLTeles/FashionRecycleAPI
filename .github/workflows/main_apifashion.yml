@@ -19,11 +19,13 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: "6.0.x"
           include-prerelease: true
 
-      - name: Build with dotnet
+      - name: Go to SLN Directory
         run: cd FashionRecycle.API
+
+      - name: Build with dotnet
         run: dotnet build --configuration Release
 
       - name: dotnet publish
@@ -39,7 +41,7 @@ jobs:
     runs-on: windows-latest
     needs: build
     environment:
-      name: 'Production'
+      name: "Production"
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
@@ -52,7 +54,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'ApiFashion'
-          slot-name: 'Production'
+          app-name: "ApiFashion"
+          slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CB9F05C964294AE59B487574F5D487F1 }}
           package: .
