@@ -138,7 +138,14 @@ namespace FashionRecycle.Application
                .ForMember(x => x.PricePartner, x => x.MapFrom(d => d.PricePartner))
                .ForMember(x => x.PriceSale, x => x.MapFrom(d => d.PriceSale))
                .ForMember(x => x.Partner, x => x.MapFrom(d => new PartnerEntity { Id = d.PartnerId }))
-               .ForMember(x => x.Active, x => x.MapFrom(d => d.Active))              
+               .ForMember(x => x.Active, x => x.MapFrom(d => d.Active))
+               .ForMember(x => x.ProductStatus, x => x.MapFrom(d => d.ProductStatus))
+               .ForMember(x => x.SerialNumber, x => x.MapFrom(d => d.SerialNumber))
+               .ForMember(x => x.Model, x => x.MapFrom(d => d.Model))
+               .ForMember(x => x.Colour, x => x.MapFrom(d => d.Colour))
+               .ForMember(x => x.Observation, x => x.MapFrom(d => d.Observation))
+               .ForMember(x => x.AlternativeId, x => x.MapFrom(d => d.AlternativeId))
+               .ForMember(x => x.BrandId, x => x.MapFrom(d => d.BrandId))
                .ReverseMap();
 
             CreateMap<ListAllProductsViewModel, ProductEntity>()
@@ -150,17 +157,23 @@ namespace FashionRecycle.Application
                .ForMember(x => x.PriceSale, x => x.MapFrom(d => d.PriceSale))
                .ForMember(x => x.Partner, x => x.MapFrom(d => new PartnerEntity { Name = d.PartnerName }))
                .ForMember(x => x.Active, x => x.MapFrom(d => d.Active))
+               .ForMember(x => x.ProductStatus, x => x.MapFrom(d => d.ProductStatus))
+               .ForMember(x => x.AlternativeId, x => x.MapFrom(d => d.AlternativeId))
+               .ForMember(x => x.SerialNumber, x => x.MapFrom(d => d.SerialNumber))
+               .ForMember(x => x.Model, x => x.MapFrom(d => d.Model))
+                .ForMember(x => x.BrandId, x => x.MapFrom(d => d.BrandId))
                .ReverseMap();
 
             CreateMap<CreateProductInputModel, ProductEntity>()
               .ForMember(x => x.Id, x => x.MapFrom(d => d.id))
-              .ForMember(x => x.Name, x => x.MapFrom(d => d.name))
-              .ForMember(x => x.Brand, x => x.MapFrom(d => d.brand))
+              .ForMember(x => x.Name, x => x.MapFrom(d => d.name))              
               .ForMember(x => x.AmountInventory, x => x.MapFrom(d => d.amountInventory))
               .ForMember(x => x.PricePartner, x => x.MapFrom(d => d.pricePartner))
               .ForMember(x => x.PriceSale, x => x.MapFrom(d => d.priceSale))
               .ForMember(x => x.Partner, x => x.MapFrom(d => new PartnerEntity { Id = d.partnerId }))
               .ForMember(x => x.Active, x => x.MapFrom(d => d.active))
+              .ForMember(x => x.ProductStatus, x => x.MapFrom(d => d.productStatus))
+
               .ReverseMap();
 
             CreateMap<ListProductsForSaleViewModel, ProductEntity>()
@@ -192,22 +205,18 @@ namespace FashionRecycle.Application
 
             CreateMap<PaymentViewModel, PaymentsEntity>()
                 .ForMember(x => x.Id, x => x.MapFrom(d => d.Id))
-                .ForMember(x => x.Partner, x => x.MapFrom(d => d.Partner))
-                .ForMember(x => x.Provider, x => x.MapFrom(d => d.Provider))
                 .ForMember(x => x.PaymenyType, x => x.MapFrom(d => d.PaymenyType))
                 .ForMember(x => x.Amount, x => x.MapFrom(d => d.Amount))
                 .ForMember(x => x.PaymentDate, x => x.MapFrom(d => d.PaymentDate))
-                .ForMember(x => x.Active, x => x.MapFrom(d => d.Active))
+                .ForMember(x => x.Name, x => x.MapFrom(d => d.Name))
                 .ReverseMap();
 
             CreateMap<CreatePaymentInputModel, PaymentsEntity>()
                 .ForMember(x => x.Id, x => x.MapFrom(d => d.id))
-                .ForMember(x => x.Partner, x => x.MapFrom(d => new PartnerEntity { Id = d.idPartner }))
-                .ForMember(x => x.Provider, x => x.MapFrom(d => new ProviderEntity { Id = d.idProvider }))
+                .ForMember(x => x.Name, x => x.MapFrom(d => d.name))
                 .ForMember(x => x.PaymenyType, x => x.MapFrom(d => new PaymenyTypeEntity { Id = d.idPaymentType }))
                 .ForMember(x => x.Amount, x => x.MapFrom(d => d.amount))
-                .ForMember(x => x.PaymentDate, x => x.MapFrom(d => d.paymentDate))
-                .ForMember(x => x.Active, x => x.MapFrom(d => d.active))
+                .ForMember(x => x.PaymentDate, x => x.MapFrom(d => d.paymentDate))                
                 .ReverseMap();
 
             CreateMap<ProviderResumeListViewModel, ProviderEntity>()
@@ -215,6 +224,16 @@ namespace FashionRecycle.Application
               .ForMember(x => x.LegalCompanyName, x => x.MapFrom(d => d.LegalCompanyName))
               .ForMember(x => x.CompanyName, x => x.MapFrom(d => d.CompanyName))
               .ForMember(x => x.CNPJ, x => x.MapFrom(d => d.CNPJ))              
+              .ReverseMap();
+
+            CreateMap<BrandViewModel, BrandEntity>()
+              .ForMember(x => x.Id, x => x.MapFrom(d => d.Id))
+              .ForMember(x => x.Name, x => x.MapFrom(d => d.Name))
+              .ReverseMap();
+
+            CreateMap<CreateBrandInputModel, BrandEntity>()
+                .ForMember(x => x.Id, x => x.MapFrom(d => d.id))
+                .ForMember(x => x.Name, x => x.MapFrom(d => d.name))
               .ReverseMap();
         }
     }

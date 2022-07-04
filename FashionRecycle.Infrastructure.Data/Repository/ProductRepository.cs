@@ -1,4 +1,5 @@
 ﻿using FashionRecycle.API.Core.Entity;
+using FashionRecycle.API.Core.Enums;
 using FashionRecycle.API.Core.Interface;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -47,7 +48,14 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                      B.ACTIVE AS ACTIVEPARTNER,
                                                                      B.CREATIONDATE AS CREATIONDATEPARTNER,
                                                                      A.ACTIVE,
-                                                                     A.CREATIONDATE
+                                                                     A.CREATIONDATE,
+                                                                     A.ALTERNATIVE_ID,
+                                                                     A.SERIALNUMBER,
+                                                                     A.MODEL,
+                                                                     A.COLOUR,
+                                                                     A.OBSERVATION,
+                                                                     A.BRANDID,
+                                                                     A.PRODUCTSTATUS
                                                             FROM PRODUCT A
                                                             INNER JOIN [PARTNER] B
                                                             ON A.IDPARTNER = B.ID
@@ -68,6 +76,13 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                 result.PriceSale = double.Parse(dt.Rows[0]["PRICESALE"].ToString());                
                 result.Active = bool.Parse(dt.Rows[0]["ACTIVE"].ToString());
                 result.CreationDate = DateTime.Parse(dt.Rows[0]["CREATIONDATE"].ToString());
+                result.BrandId = int.Parse(dt.Rows[0]["BRANDID"].ToString());
+                result.ProductStatus = int.Parse(dt.Rows[0]["PRODUCTSTATUS"].ToString());
+                result.AlternativeId = dt.Rows[0]["ALTERNATIVE_ID"].ToString();
+                result.SerialNumber = dt.Rows[0]["SERIALNUMBER"].ToString();
+                result.Model = dt.Rows[0]["MODEL"].ToString();
+                result.Colour = dt.Rows[0]["COLOUR"].ToString();
+                result.Observation = dt.Rows[0]["OBSERVATION"].ToString();
 
                 partnerEntity.Id = int.Parse(dt.Rows[0]["IDPARTNER"].ToString());
                 partnerEntity.Name = dt.Rows[0]["NAMEPARTNER"].ToString();
@@ -87,7 +102,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
             return result;
         }
 
-        public List<ProductEntity> GetProductAll(int productId, string brand, string name, int idPartner)
+        public List<ProductEntity> GetProductAll(string productId, int idBrand, int idPartner)
         {
             List<ProductEntity> result = new List<ProductEntity>();
 
@@ -97,27 +112,31 @@ namespace FashionRecycle.Infrastructure.Data.Repository
             {
                 con.Open();
                 using (SqlCommand command = new SqlCommand(@"SELECT  A.ID,
-                                                                     A.[NAME],
-                                                                     A.BRAND,
-                                                                     A.AMOUNTINVENTORY,
+                                                                     A.[NAME],                                                                                                                                          
                                                                      A.PRICEPARTNER,
                                                                      A.PRICESALE,
                                                                      A.IDPARTNER,
                                                                      B.[NAME] AS NAMEPARTNER,                                                                     
                                                                      A.ACTIVE,
-                                                                     A.CREATIONDATE
+                                                                     A.CREATIONDATE,
+                                                                     A.BRANDID,
+                                                                     C.NAME AS NAMEBRAND,
+                                                                     A.ALTERNATIVE_ID,
+                                                                     A.SERIALNUMBER,
+                                                                     A.MODEL,
+                                                                     A.COLOUR
                                                             FROM PRODUCT A
                                                             INNER JOIN [PARTNER] B
                                                             ON A.IDPARTNER = B.ID
-                                                             WHERE (@PRODUCTID IS NULL OR A.ID = @PRODUCTID)
+                                                            INNER JOIN [BRAND] C
+                                                            ON A.BRANDID = C.ID
+                                                             WHERE (@PRODUCTID IS NULL OR A.ALTERNATIVE_ID = @PRODUCTID)
                                                              AND (@IDPARTNER IS NULL OR A.IDPARTNER = @IDPARTNER)
-                                                             AND (@BRAND IS NULL OR @BRAND = '' OR A.BRAND LIKE '%'+@BRAND+'%')
-                                                             AND (@NAME IS NULL OR @NAME = '' OR A.[NAME] LIKE '%'+@NAME+'%')", con))
+                                                             AND (@IDBRAND IS NULL OR A.BRANDID = @IDBRAND)", con))
                 {
-                    command.Parameters.Add("@PRODUCTID", SqlDbType.Int).Value = productId == 0 ? DBNull.Value : productId;
+                    command.Parameters.Add("@PRODUCTID", SqlDbType.VarChar).Value = productId == "" ? DBNull.Value : productId;
                     command.Parameters.Add("@IDPARTNER", SqlDbType.Int).Value = idPartner == 0 ? DBNull.Value : idPartner;
-                    command.Parameters.Add("@NAME", SqlDbType.VarChar).Value = name;
-                    command.Parameters.Add("@BRAND", SqlDbType.VarChar).Value = brand;
+                    command.Parameters.Add("@IDBRAND", SqlDbType.Int).Value = idBrand == 0 ? DBNull.Value : idBrand;                    
                     dt.Load(command.ExecuteReader());
                 }
 
@@ -131,9 +150,13 @@ namespace FashionRecycle.Infrastructure.Data.Repository
 
 
                     entity.Id = int.Parse(dt.Rows[i]["ID"].ToString());
+                    entity.BrandId = int.Parse(dt.Rows[i]["BRANDID"].ToString());
                     entity.Name = dt.Rows[i]["NAME"].ToString();
-                    entity.Brand = dt.Rows[i]["BRAND"].ToString();
-                    entity.AmountInventory = int.Parse(dt.Rows[i]["AMOUNTINVENTORY"].ToString());
+                    entity.AlternativeId = dt.Rows[i]["ALTERNATIVE_ID"].ToString();
+                    entity.SerialNumber = dt.Rows[i]["SERIALNUMBER"].ToString();
+                    entity.Model = dt.Rows[i]["MODEL"].ToString();
+                    entity.Colour = dt.Rows[i]["COLOUR"].ToString();
+                    entity.Brand = dt.Rows[i]["NAMEBRAND"].ToString();
                     entity.PricePartner = double.Parse(dt.Rows[i]["PRICEPARTNER"].ToString());
                     entity.PriceSale = double.Parse(dt.Rows[i]["PRICESALE"].ToString());
                     entity.Active = bool.Parse(dt.Rows[i]["ACTIVE"].ToString());
@@ -158,21 +181,34 @@ namespace FashionRecycle.Infrastructure.Data.Repository
             {
                 con.Open();
                 using (SqlCommand command = new SqlCommand(@"INSERT INTO PRODUCT VALUES(@NAME, 
-                                                                                        @BRAND, 
-                                                                                        @AMOUNTINVENTORY,
+                                                                                        NULL, 
+                                                                                        1,
                                                                                         @PRICEPARTNER,
                                                                                         @PRICESALE, 
                                                                                         @IDPARTNER,                                                                                         
                                                                                         @ACTIVE, 
-                                                                                        GETDATE())", con))
+                                                                                        GETDATE(),
+                                                                                        @PRODUCTSTATUS,
+                                                                                        @SERIALNUMBER,
+                                                                                        NULL,
+                                                                                        @MODEL,
+                                                                                        @COLOUR,
+                                                                                        @OBSERVATION,
+                                                                                        @ALTERNATIVE_ID,
+                                                                                        @BRANDID)", con))
                 {
-                    command.Parameters.Add("@NAME", SqlDbType.VarChar).Value = productEntity.Name;
-                    command.Parameters.Add("@BRAND", SqlDbType.VarChar).Value = productEntity.Brand;
-                    command.Parameters.Add("@AMOUNTINVENTORY", SqlDbType.Int).Value = productEntity.AmountInventory;
+                    command.Parameters.Add("@NAME", SqlDbType.VarChar).Value = productEntity.Name;                                 
                     command.Parameters.Add("@PRICEPARTNER", SqlDbType.Decimal).Value = productEntity.PricePartner;
                     command.Parameters.Add("@PRICESALE", SqlDbType.Decimal).Value = productEntity.PriceSale;
                     command.Parameters.Add("@IDPARTNER", SqlDbType.Int).Value = productEntity.Partner.Id;                                        
                     command.Parameters.Add("@ACTIVE", SqlDbType.Bit).Value = productEntity.Active == true ? 1 : 0;
+                    command.Parameters.Add("@PRODUCTSTATUS", SqlDbType.Int).Value = productEntity.ProductStatus;
+                    command.Parameters.Add("@SERIALNUMBER", SqlDbType.VarChar).Value = productEntity.SerialNumber;
+                    command.Parameters.Add("@COLOUR", SqlDbType.VarChar).Value = productEntity.Colour;
+                    command.Parameters.Add("@OBSERVATION", SqlDbType.VarChar).Value = productEntity.Observation;
+                    command.Parameters.Add("@ALTERNATIVE_ID", SqlDbType.VarChar).Value = productEntity.AlternativeId;
+                    command.Parameters.Add("@MODEL", SqlDbType.VarChar).Value = productEntity.Model;
+                    command.Parameters.Add("@BRANDID", SqlDbType.Int).Value = productEntity.BrandId;
                     command.ExecuteNonQuery();
                 }
             }
@@ -183,24 +219,32 @@ namespace FashionRecycle.Infrastructure.Data.Repository
             using (SqlConnection con = new SqlConnection(_configuration["ConnectionStrings:Default"]))
             {
                 con.Open();
-                using (SqlCommand command = new SqlCommand(@"UPDATE PRODUCT SET NAME = @NAME,
-                                                                                       BRAND = @BRAND,                                                                                       
-                                                                                       AMOUNTINVENTORY = @AMOUNTINVENTORY,
+                using (SqlCommand command = new SqlCommand(@"UPDATE PRODUCT SET NAME = @NAME,                                                                                                                                                                                                                                                     
                                                                                        PRICEPARTNER = @PRICEPARTNER,
                                                                                        PRICESALE = @PRICESALE,
                                                                                        IDPARTNER = @IDPARTNER,                                                                                       
-                                                                                       ACTIVE = @ACTIVE
+                                                                                       ACTIVE = @ACTIVE,
+                                                                                       PRODUCTSTATUS = @PRODUCTSTATUS,
+                                                                                       BRANDID = @BRANDID,
+                                                                                       SERIALNUMBER = @SERIALNUMBER,                                                                                        
+                                                                                       MODEL = @MODEL,
+                                                                                       COLOUR = @COLOUR,
+                                                                                       OBSERVATION = @OBSERVATION                                                                                    
                                                                     WHERE ID = @PRODUCTID", con))
                 {
 
                     command.Parameters.Add("@PRODUCTID", SqlDbType.Int).Value = productEntity.Id;
-                    command.Parameters.Add("@NAME", SqlDbType.VarChar).Value = productEntity.Name;
-                    command.Parameters.Add("@BRAND", SqlDbType.VarChar).Value = productEntity.Brand;
-                    command.Parameters.Add("@AMOUNTINVENTORY", SqlDbType.Int).Value = productEntity.AmountInventory;
+                    command.Parameters.Add("@NAME", SqlDbType.VarChar).Value = productEntity.Name;                    
                     command.Parameters.Add("@PRICEPARTNER", SqlDbType.Decimal).Value = productEntity.PricePartner;
                     command.Parameters.Add("@PRICESALE", SqlDbType.Decimal).Value = productEntity.PriceSale;
                     command.Parameters.Add("@IDPARTNER", SqlDbType.Int).Value = productEntity.Partner.Id;                   
                     command.Parameters.Add("@ACTIVE", SqlDbType.Bit).Value = productEntity.Active == true ? 1 : 0;
+                    command.Parameters.Add("@PRODUCTSTATUS", SqlDbType.Int).Value = productEntity.ProductStatus;
+                    command.Parameters.Add("@BRANDID", SqlDbType.Int).Value = productEntity.BrandId;
+                    command.Parameters.Add("@SERIALNUMBER", SqlDbType.VarChar).Value = productEntity.SerialNumber;
+                    command.Parameters.Add("@COLOUR", SqlDbType.VarChar).Value = productEntity.Colour;
+                    command.Parameters.Add("@OBSERVATION", SqlDbType.VarChar).Value = productEntity.Observation;
+                    command.Parameters.Add("@MODEL", SqlDbType.VarChar).Value = productEntity.Model;                    
                     command.ExecuteNonQuery();
                 }
             }
@@ -225,7 +269,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                             FROM PRODUCT A
                                                             INNER JOIN [PARTNER] B
                                                             ON A.IDPARTNER = B.ID                                                        
-                                                            WHERE A.ACTIVE = 1 AND A.AMOUNTINVENTORY > 0", con))
+                                                            WHERE A.ACTIVE = 1 AND A.PRODUCTSTATUS = 1", con))
                 {              
                     dt.Load(command.ExecuteReader());
                 }
@@ -258,20 +302,44 @@ namespace FashionRecycle.Infrastructure.Data.Repository
             return result;
         }
 
-        public void UpdateProductAmount(int idProduct, int amount)
+        public void UpdateProductStatus(int idProduct)
         {
+
+            int productNewStatus = (int)ProductStatusEnum.sold;
+
+
             using (SqlConnection con = new SqlConnection(_configuration["ConnectionStrings:Default"]))
             {
                 con.Open();
-                using (SqlCommand command = new SqlCommand(@"UPDATE PRODUCT SET AMOUNTINVENTORY = AMOUNTINVENTORY - @AMOUNTINVENTORY
+                using (SqlCommand command = new SqlCommand(@"UPDATE PRODUCT SET PRODUCTSTATUS = @PRODUCTSTATUS
                                                                     WHERE ID = @PRODUCTID", con))
                 {
-                   
-                    command.Parameters.Add("@AMOUNTINVENTORY", SqlDbType.Int).Value = amount;
+
+                    command.Parameters.Add("@PRODUCTSTATUS", SqlDbType.Int).Value = productNewStatus;
                     command.Parameters.Add("@PRODUCTID", SqlDbType.Int).Value = idProduct;
                     command.ExecuteNonQuery();
                 }
             }
-        }        
+        }
+
+        public int CoutPartnerPorducts(int partnerId)
+        {            
+            DataTable dt = new DataTable();
+
+            using (SqlConnection con = new SqlConnection(_configuration["ConnectionStrings:Default"]))
+            {
+                con.Open();
+                using (SqlCommand command = new SqlCommand(@"SELECT *
+                                                            FROM PRODUCT                                                   
+                                                            WHERE IDPARTNER = @IDPARTNER", con))
+                {
+                    command.Parameters.Add("@IDPARTNER", SqlDbType.Int).Value = partnerId;
+                    dt.Load(command.ExecuteReader());
+                }
+
+            }
+
+            return dt.Rows.Count;
+        }
     }
 }

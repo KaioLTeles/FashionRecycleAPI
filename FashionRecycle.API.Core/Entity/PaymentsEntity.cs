@@ -8,8 +8,7 @@ namespace FashionRecycle.API.Core.Entity
 {
     public class PaymentsEntity : BaseEntity
     {
-        public ProviderEntity? Provider { get; set; }
-        public PartnerEntity? Partner { get; set; }
+        public string Name { get; set; }
         public PaymenyTypeEntity? PaymenyType { get; set; }
         public double Amount { get; set; }
         public DateTime PaymentDate { get; set; }

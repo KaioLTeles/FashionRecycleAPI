@@ -16,11 +16,11 @@ namespace FashionRecycle.API.Controllers
         }
 
         [HttpGet("getListPaymentsAll")]
-        public IActionResult GetListPaymentsAll(int idPayment, int idPartner, int idProvider)
+        public IActionResult GetListPaymentsAll(string inicialDate, string finalDate)
         {           
             try
             {
-                var result = _paymentBusiness.GetListPaymentAll(idPayment,idPartner,idProvider);
+                var result = _paymentBusiness.GetListPaymentAll(inicialDate, finalDate);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -57,6 +57,37 @@ namespace FashionRecycle.API.Controllers
             {
                 Logger.WriteError("Erro ao criar/alterar o pagamento " + inputModel.id + " - ", ex);
                 return BadRequest("Erro ao criar/alterar o pagamento favor contactar a TI");
+            }
+        }
+
+        [HttpGet("getMargin")]
+        public IActionResult GetMargin()
+        {
+            try
+            {
+                var result = _paymentBusiness.GetMargin();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError("Erro ao buscar a margem - ", ex);
+                return BadRequest("Erro ao buscar a margem favor contactar a TI");
+            }
+        }
+
+        [HttpDelete("removePayment/{paymentId}")]
+        public IActionResult RemoveBrand([FromRoute] int paymentId)
+        {
+            try
+            {
+                _paymentBusiness.DeletePayment(paymentId);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError("Erro ao remover Pagamento - ", ex);
+                return BadRequest("Erro ao remover Pagamento contactar a TI");
             }
         }
     }

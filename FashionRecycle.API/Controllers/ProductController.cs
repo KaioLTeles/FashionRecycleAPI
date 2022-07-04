@@ -16,13 +16,12 @@ namespace FashionRecycle.API.Controllers
         }
 
         [HttpGet("getListProductAll")]
-        public IActionResult GetListProductAll(int id, string name, string brand, int idPartner)
+        public IActionResult GetListProductAll(string id, int idBrand, int idPartner)
         {
             var input = new ListAllProductsInputModel
             {
-                Id = id,
-                Name = name == null ? String.Empty : name,
-                Brand = brand == null ? String.Empty : brand,
+                Id = id == null ? "" : id,                
+                IdBrand = idBrand,
                 IdPartner = idPartner
 
             };

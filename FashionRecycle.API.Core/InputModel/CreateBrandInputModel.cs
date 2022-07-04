@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace FashionRecycle.API.Core.InputModel
 {
-    public class CreatePaymentInputModel
+    public class CreateBrandInputModel
     {
         public int id { get; set; }
         public string? name { get; set; }
-        public int idPaymentType { get; set; }
-        public double amount { get; set; }
-        public string? paymentDate { get; set; }        
+
     }
 }

@@ -30,6 +30,8 @@ namespace FashionRecycle.Application.Business
 
                 var result = _mapper.Map<PaymentViewModel>(resultEntity);
 
+                result.PaymentDateFormated = result.PaymentDate.ToString("yyyy-MM-dd");
+
                 return result;
             }
             else
@@ -38,18 +40,19 @@ namespace FashionRecycle.Application.Business
             }
         }
 
-        public List<PaymentViewModel> GetListPaymentAll(int idPayment, int idPartner, int idProvider)
+        public List<PaymentViewModel> GetListPaymentAll(string inicialDate, string finalDate)
         {
 
             List<PaymentViewModel> resultList = new List<PaymentViewModel>();
 
-            var resultEntity = _paymentRepository.GetPaymentAll(idPayment, idProvider, idPartner);
+            var resultEntity = _paymentRepository.GetPaymentAll(inicialDate, finalDate);
 
             foreach (var provider in resultEntity)
             {
                 var entity = _mapper.Map<PaymentViewModel>(provider);
                 if (entity != null)
                 {
+                    entity.PaymentDateFormated = entity.PaymentDate.ToString("dd/MM/yyy");
                     resultList.Add(entity);
                 }
             }
@@ -75,6 +78,24 @@ namespace FashionRecycle.Application.Business
             {
                 throw new Exception("Objeto de input não pode ser nulo!");
             }
+        }
+
+        public double GetMargin()
+        {
+            return _paymentRepository.GetMargin();
+        }
+
+        public void DeletePayment(int idPayment)
+        {
+            if(idPayment > 0)
+            {
+                _paymentRepository.DeletePayment(idPayment);
+            }
+            else
+            {
+                throw new Exception("Objeto de input não pode ser 0!");
+            }
+            
         }
     }
 }

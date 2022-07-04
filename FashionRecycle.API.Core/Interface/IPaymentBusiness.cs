@@ -11,7 +11,9 @@ namespace FashionRecycle.API.Core.Interface
     public interface IPaymentBusiness
     {
         PaymentViewModel GetPaymentById(int idPayment);
-        List<PaymentViewModel> GetListPaymentAll(int idPayment, int idPartner, int idProvider);
+        List<PaymentViewModel> GetListPaymentAll(string inicialDate, string finalDate);
         void AlterOrCreatePayment(CreatePaymentInputModel inputModel);
+        double GetMargin();
+        void DeletePayment(int idPayment);
     }
 }

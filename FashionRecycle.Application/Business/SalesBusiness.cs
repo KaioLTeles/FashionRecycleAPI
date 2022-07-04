@@ -45,7 +45,7 @@ namespace FashionRecycle.Application.Business
 
                     foreach(var item in saleItemEntityList)
                     {
-                        _productRepository.UpdateProductAmount(item.IdProduct, item.Amount);
+                        _productRepository.UpdateProductStatus(item.IdProduct);
                     }
 
                     return saleId;

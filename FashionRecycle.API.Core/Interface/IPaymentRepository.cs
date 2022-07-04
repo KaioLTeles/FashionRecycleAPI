@@ -10,8 +10,10 @@ namespace FashionRecycle.API.Core.Interface
     public interface IPaymentRepository
     {
         PaymentsEntity GetPaymentById(int paymentId);
-        List<PaymentsEntity> GetPaymentAll(int paymentId, int idProvider, int idPartner);
+        List<PaymentsEntity> GetPaymentAll(string inicialDate, string finalDate);
         void CreatePayment(PaymentsEntity paymentsEntity);
         void UpdatePayment(PaymentsEntity paymentsEntity);
+        double GetMargin();
+        void DeletePayment(int idPayment);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FashionRecycle.API.Core.Entity;
+using FashionRecycle.API.Core.Enums;
 using FashionRecycle.API.Core.InputModel;
 using FashionRecycle.API.Core.Interface;
 using FashionRecycle.API.Core.ViewModel;
@@ -44,7 +45,7 @@ namespace FashionRecycle.Application.Business
             {
                 List<ListAllProductsViewModel> resultList = new List<ListAllProductsViewModel>();
 
-                var resultEntity = _productRepository.GetProductAll(listAllProductsInputModel.Id, listAllProductsInputModel.Brand, listAllProductsInputModel.Name, listAllProductsInputModel.IdPartner);
+                var resultEntity = _productRepository.GetProductAll(listAllProductsInputModel.Id, listAllProductsInputModel.IdBrand, listAllProductsInputModel.IdPartner);
 
                 foreach (var product in resultEntity)
                 {
@@ -74,6 +75,17 @@ namespace FashionRecycle.Application.Business
             else if (inputModel != null)
             {
                 var entity = _mapper.Map<ProductEntity>(inputModel);
+
+                var numberProducts = _productRepository.CoutPartnerPorducts(entity.Partner.Id);
+
+                if(numberProducts == 0)
+                {
+                    numberProducts = 1;
+                }
+
+                entity.ProductStatus = (int)ProductStatusEnum.available;
+
+                entity.AlternativeId = "FR." + entity.Partner.Id + "." + (numberProducts + 1).ToString();
 
                 _productRepository.CreateProduct(entity);
             }

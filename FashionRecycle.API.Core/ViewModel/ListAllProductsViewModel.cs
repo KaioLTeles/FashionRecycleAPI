@@ -15,6 +15,12 @@ namespace FashionRecycle.API.Core.ViewModel
         public double PricePartner { get; set; }
         public double PriceSale { get; set; }
         public string? PartnerName { get; set; }
+        public int ProductStatus { get; set; }
+        public string? SerialNumber { get; set; }
+        public string? AlternativeId { get; set; }
+        public string? Model { get; set; }
+        public string? Colour { get; set; }
+        public int BrandId { get; set; }
         public bool Active { get; set; }
     }
 }
