@@ -209,6 +209,7 @@ namespace FashionRecycle.Application
                 .ForMember(x => x.Amount, x => x.MapFrom(d => d.Amount))
                 .ForMember(x => x.PaymentDate, x => x.MapFrom(d => d.PaymentDate))
                 .ForMember(x => x.Name, x => x.MapFrom(d => d.Name))
+                .ForMember(x => x.PaymentMade, x => x.MapFrom(d => d.paymentMade))
                 .ReverseMap();
 
             CreateMap<CreatePaymentInputModel, PaymentsEntity>()
@@ -216,7 +217,8 @@ namespace FashionRecycle.Application
                 .ForMember(x => x.Name, x => x.MapFrom(d => d.name))
                 .ForMember(x => x.PaymenyType, x => x.MapFrom(d => new PaymenyTypeEntity { Id = d.idPaymentType }))
                 .ForMember(x => x.Amount, x => x.MapFrom(d => d.amount))
-                .ForMember(x => x.PaymentDate, x => x.MapFrom(d => d.paymentDate))                
+                .ForMember(x => x.PaymentMade, x => x.MapFrom(d => d.paymentMade))
+                .ForMember(x => x.PaymentDate, x => x.MapFrom(d => d.paymentDate))
                 .ReverseMap();
 
             CreateMap<ProviderResumeListViewModel, ProviderEntity>()

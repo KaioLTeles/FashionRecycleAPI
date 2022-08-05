@@ -57,11 +57,11 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                              AND (@CLIENTID IS NULL OR A.IDCLIENT = @CLIENTID)                                                              
                                                              AND (@PARTNERID IS NULL OR  D.IDPARTNER = @PARTNERID)
                                                              AND (@BRANDID IS NULL OR  E.BRANDID = @BRANDID)                                                           
-                                                             AND (A.CREATIONDATE BETWEEN   @INICIALDATE AND @FINALDATE) AND A.ACTIVE = 1
+                                                             AND (CAST(A.CREATIONDATE AS DATE) BETWEEN   CAST(@INICIALDATE AS DATE) AND CAST(@FINALDATE AS DATE)) AND A.ACTIVE = 1
                                                              ORDER BY A.CREATIONDATE,A.ID,D.ID", con))
                 {
                     command.Parameters.Add("@ID", SqlDbType.Int).Value = inputModel.idSale == 0 ? DBNull.Value : inputModel.idSale;
-                    command.Parameters.Add("@CLIENTID", SqlDbType.Int).Value = inputModel.idClient == 0 ? DBNull.Value : inputModel.idClient;                    
+                    command.Parameters.Add("@CLIENTID", SqlDbType.Int).Value = inputModel.idClient == 0 ? DBNull.Value : inputModel.idClient;
                     command.Parameters.Add("@PARTNERID", SqlDbType.Int).Value = inputModel.idPartner == 0 ? DBNull.Value : inputModel.idPartner;
                     command.Parameters.Add("@BRANDID", SqlDbType.VarChar).Value = inputModel.brand == 0 ? DBNull.Value : inputModel.idPartner;
                     command.Parameters.Add("@INICIALDATE", SqlDbType.DateTime).Value = inputModel.inicialFilterDate == "" ? DBNull.Value : DateTime.Parse(inputModel.inicialFilterDate, CultureInfo.InvariantCulture);
@@ -82,7 +82,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                     entity.ProductDesciption = dt.Rows[i]["NAMEPRODUCT"].ToString();
                     entity.AlternativeId = dt.Rows[i]["ALTERNATIVE_ID"].ToString();
                     entity.AmountSale = double.Parse(dt.Rows[i]["AMOUNTSALE"].ToString());
-                    entity.PaymentMethod = dt.Rows[i]["DESCRIPTION"].ToString();                    
+                    entity.PaymentMethod = dt.Rows[i]["DESCRIPTION"].ToString();
                     entity.Active = bool.Parse(dt.Rows[i]["ACTIVE"].ToString());
                     entity.CreationDate = DateTime.Parse(dt.Rows[i]["CREATIONDATE"].ToString());
 
@@ -96,11 +96,29 @@ namespace FashionRecycle.Infrastructure.Data.Repository
             return result;
         }
 
-        public List<ReportAllPaymentsViewModel> GellAllPaymentsReport(string inicialDate, string finalDate, int idPaymentType)
+        public List<ReportAllPaymentsViewModel> GellAllPaymentsReport(string inicialDate, string finalDate, int idPaymentType, int filtertype)
         {
             List<ReportAllPaymentsViewModel> result = new List<ReportAllPaymentsViewModel>();
 
             DataTable dt = new DataTable();
+
+            string commandApend = string.Empty;
+
+            if (filtertype == 1)
+            {
+                commandApend = @"AND (A.PAYMENTMADE = 1)";
+            }
+            else if (filtertype == 2)
+            {
+                commandApend = @"AND (CAST(A.PAYMENTDATE AS DATE) < CAST(GETDATE() AS DATE))";
+            }
+            else if (filtertype == 3)
+            {
+                commandApend = @"AND (CAST(A.PAYMENTDATE AS DATE)  < CAST(GETDATE() AS DATE))";
+            }
+
+
+
 
             using (SqlConnection con = new SqlConnection(_configuration["ConnectionStrings:Default"]))
             {
@@ -115,9 +133,10 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                              INNER JOIN PAYMENTTYPE B 
                                                              ON A.IDPAYMENTTYPE = B.ID
                                                              WHERE   A.ACTIVE = 1
-                                                                     AND (A.PAYMENTDATE BETWEEN   @INICIALDATE AND @FINALDATE)
-                                                                     AND (@IDPAYMENTTYPE IS NULL OR  A.IDPAYMENTTYPE = @IDPAYMENTTYPE)", con))
+                                                                     AND (CAST(A.PAYMENTDATE AS DATE) BETWEEN   CAST(@INICIALDATE AS DATE) AND CAST(@FINALDATE AS DATE))
+                                                                     AND (@IDPAYMENTTYPE IS NULL OR  A.IDPAYMENTTYPE = @IDPAYMENTTYPE)" + commandApend, con))
                 {
+
                     command.Parameters.Add("@IDPAYMENTTYPE", SqlDbType.Int).Value = idPaymentType == 0 ? DBNull.Value : idPaymentType;
                     command.Parameters.Add("@INICIALDATE", SqlDbType.DateTime).Value = inicialDate == "" ? DBNull.Value : DateTime.Parse(inicialDate, CultureInfo.InvariantCulture);
                     command.Parameters.Add("@FINALDATE", SqlDbType.DateTime).Value = finalDate == "" ? DBNull.Value : DateTime.Parse(finalDate, CultureInfo.InvariantCulture);
@@ -134,7 +153,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
 
                     entity.Name = dt.Rows[i]["NAME"].ToString();
                     entity.PaymentDescription = dt.Rows[i]["DESCRIPTION"].ToString();
-                    entity.Amount = double.Parse(dt.Rows[i]["AMOUNT"].ToString());                                       
+                    entity.Amount = double.Parse(dt.Rows[i]["AMOUNT"].ToString());
                     entity.CreationDate = DateTime.Parse(dt.Rows[i]["CREATIONDATE"].ToString());
                     entity.PaymentDate = DateTime.Parse(dt.Rows[i]["PAYMENTDATE"].ToString());
 
@@ -144,6 +163,112 @@ namespace FashionRecycle.Infrastructure.Data.Repository
 
                     result.Add(entity);
                 }
+
+            }
+
+            return result;
+        }
+
+        public List<AllSalesForCashFlowViewModel> GetAllSalesForCashFlow(string inicialDate, string finalDate)
+        {
+            List<AllSalesForCashFlowViewModel> result = new List<AllSalesForCashFlowViewModel>();
+
+            DataTable dt = new DataTable();
+
+            using (SqlConnection con = new SqlConnection(_configuration["ConnectionStrings:Default"]))
+            {
+                con.Open();
+                using (SqlCommand command = new SqlCommand(@"SELECT CAST(CREATIONDATE AS DATE) AS CREATIONDATE, SUM(AMOUNTSALE) AS AMOUNTSALE FROM [dbo].[SALES]  WHERE CAST(CREATIONDATE AS DATE) BETWEEN CAST(@INICIALDATE AS DATE) AND CAST(@FINALDATE AS DATE) GROUP BY CAST(CREATIONDATE AS DATE)", con))
+                {
+                    command.Parameters.Add("@INICIALDATE", SqlDbType.DateTime).Value = inicialDate == "" ? DBNull.Value : DateTime.Parse(inicialDate, CultureInfo.InvariantCulture);
+                    command.Parameters.Add("@FINALDATE", SqlDbType.DateTime).Value = finalDate == "" ? DBNull.Value : DateTime.Parse(finalDate, CultureInfo.InvariantCulture);
+                    dt.Load(command.ExecuteReader());
+                }
+
+            }
+            if (dt.Rows.Count > 0)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    AllSalesForCashFlowViewModel entity = new AllSalesForCashFlowViewModel();
+
+
+                    entity.AmountSale = double.Parse(dt.Rows[i]["AMOUNTSALE"].ToString());
+
+                    entity.SaleDate = DateTime.Parse(dt.Rows[i]["CREATIONDATE"].ToString());
+
+                    entity.SaleDateText = entity.SaleDate.ToString("dd/MM/yyyy");
+
+
+                    result.Add(entity);
+                }
+
+            }
+
+            return result;
+        }
+
+        public List<AllPaymentsCashFlowViewModel> GetAllPaymentsCashFlow(string inicialDate, string finalDate)
+        {
+            List<AllPaymentsCashFlowViewModel> result = new List<AllPaymentsCashFlowViewModel>();
+
+            DataTable dt = new DataTable();
+
+            using (SqlConnection con = new SqlConnection(_configuration["ConnectionStrings:Default"]))
+            {
+                con.Open();
+                using (SqlCommand command = new SqlCommand(@"SELECT CAST(CREATIONDATE AS DATE) AS CREATIONDATE, SUM(AMOUNT) AS AMOUNT FROM [dbo].[PAYMENTS]  WHERE CAST(CREATIONDATE AS DATE) BETWEEN CAST(@INICIALDATE AS DATE) AND CAST(@FINALDATE AS DATE) GROUP BY CAST(CREATIONDATE AS DATE)", con))
+                {
+                    command.Parameters.Add("@INICIALDATE", SqlDbType.DateTime).Value = inicialDate == "" ? DBNull.Value : DateTime.Parse(inicialDate, CultureInfo.InvariantCulture);
+                    command.Parameters.Add("@FINALDATE", SqlDbType.DateTime).Value = finalDate == "" ? DBNull.Value : DateTime.Parse(finalDate, CultureInfo.InvariantCulture);
+                    dt.Load(command.ExecuteReader());
+                }
+
+            }
+            if (dt.Rows.Count > 0)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    AllPaymentsCashFlowViewModel entity = new AllPaymentsCashFlowViewModel();
+
+
+                    entity.AmountPayment = double.Parse(dt.Rows[i]["AMOUNT"].ToString());
+
+                    entity.PaymentDate = DateTime.Parse(dt.Rows[i]["CREATIONDATE"].ToString());
+
+                    entity.PaymentDateText = entity.PaymentDate.ToString("dd/MM/yyyy");
+
+
+                    result.Add(entity);
+                }
+
+            }
+
+            return result;
+        }
+
+        public double GetInicialAmout()
+        {
+
+            DataTable dt = new DataTable();
+
+            double result = 0;
+
+            using (SqlConnection con = new SqlConnection(_configuration["ConnectionStrings:Default"]))
+            {
+                con.Open();
+                using (SqlCommand command = new SqlCommand(@"SELECT AMOUNT FROM INICIALAMOUNT", con))
+                {
+                    dt.Load(command.ExecuteReader());
+                }
+
+            }
+            if (dt.Rows.Count > 0)
+            {
+
+
+
+                result = double.Parse(dt.Rows[0]["AMOUNT"].ToString());
 
             }
 

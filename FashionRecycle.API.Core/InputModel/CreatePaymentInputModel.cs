@@ -12,6 +12,7 @@ namespace FashionRecycle.API.Core.InputModel
         public string? name { get; set; }
         public int idPaymentType { get; set; }
         public double amount { get; set; }
-        public string? paymentDate { get; set; }        
+        public string? paymentDate { get; set; }       
+        public bool paymentMade { get; set; }
     }
 }

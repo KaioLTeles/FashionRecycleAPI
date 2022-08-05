@@ -17,7 +17,7 @@ namespace FashionRecycle.API.Controllers
 
         [HttpPost("getReportSales")]
         public IActionResult GetReportSales([FromBody] ReportSalesInputModel inputModel)
-        {           
+        {
             try
             {
                 var result = _reportBusiness.GetAllSalesResumed(inputModel);
@@ -31,17 +31,32 @@ namespace FashionRecycle.API.Controllers
         }
 
         [HttpGet("getReportPayments")]
-        public IActionResult GetReportSales(string inicialDate, string finalDate, int idPaymentType)
+        public IActionResult GetReportSales(string inicialDate, string finalDate, int idPaymentType, int filtertype)
         {
             try
             {
-                var result = _reportBusiness.GellAllPaymentsReport(inicialDate, finalDate, idPaymentType);
+                var result = _reportBusiness.GellAllPaymentsReport(inicialDate, finalDate, idPaymentType, filtertype);
                 return Ok(result);
             }
             catch (Exception ex)
             {
                 Logger.WriteError("Erro ao buscar o relatório de pagamentos - ", ex);
                 return BadRequest("Erro ao buscar o relatório de pagamentos favor contactar a TI");
+            }
+        }
+
+        [HttpGet("getAllSalesForCashFlow")]
+        public IActionResult GetAllSalesForCashFlow(string inicialDate, string finalDate, bool onlyRevenue, bool onlyExpense)
+        {
+            try
+            {
+                var result = _reportBusiness.CashFlowReport(inicialDate, finalDate, onlyRevenue, onlyExpense);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError("Erro ao buscar o relatório de fluxo de caixa - ", ex);
+                return BadRequest("Erro ao buscar o relatório de fluxo de caixa favor contactar a TI");
             }
         }
 

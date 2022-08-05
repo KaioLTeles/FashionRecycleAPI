@@ -76,16 +76,22 @@ namespace FashionRecycle.Application.Business
             {
                 var entity = _mapper.Map<ProductEntity>(inputModel);
 
-                var numberProducts = _productRepository.CoutPartnerPorducts(entity.Partner.Id);
+                var numberProducts = _productRepository.CoutPartnerPorducts(inputModel.partnerId);
 
                 if(numberProducts == 0)
                 {
                     numberProducts = 1;
+
+                    entity.ProductStatus = (int)ProductStatusEnum.available;
+
+                    entity.AlternativeId = "FR." + inputModel.partnerId + "." + (numberProducts).ToString();
                 }
+                else
+                {
+                    entity.ProductStatus = (int)ProductStatusEnum.available;
 
-                entity.ProductStatus = (int)ProductStatusEnum.available;
-
-                entity.AlternativeId = "FR." + entity.Partner.Id + "." + (numberProducts + 1).ToString();
+                    entity.AlternativeId = "FR." + inputModel.partnerId + "." + (numberProducts + 1).ToString();
+                }
 
                 _productRepository.CreateProduct(entity);
             }

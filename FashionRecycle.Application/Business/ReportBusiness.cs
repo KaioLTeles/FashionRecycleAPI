@@ -34,9 +34,124 @@ namespace FashionRecycle.Application.Business
 
         }
 
-        public List<ReportAllPaymentsViewModel> GellAllPaymentsReport(string inicialDate, string finalDate, int idPaymentType)
+        public List<ReportAllPaymentsViewModel> GellAllPaymentsReport(string inicialDate, string finalDate, int idPaymentType, int filtertype)
         {
-            var resultList = _reportRepository.GellAllPaymentsReport(inicialDate, finalDate, idPaymentType);
+            var resultList = _reportRepository.GellAllPaymentsReport(inicialDate, finalDate, idPaymentType, filtertype);
+
+            return resultList;
+        }
+
+        public List<CashFlowReportViewModel> CashFlowReport(string inicialDate, string finalDate, bool onlyRevenue, bool onlyExpense)
+        {
+            List <CashFlowReportViewModel> resultList = new List <CashFlowReportViewModel>();
+
+            if (onlyRevenue == true && onlyExpense == true)
+            {
+                var sales = _reportRepository.GetAllSalesForCashFlow(inicialDate, finalDate);
+
+                var payments = _reportRepository.GetAllPaymentsCashFlow(inicialDate, finalDate);
+
+                var balance = _reportRepository.GetInicialAmout();
+
+                CashFlowReportViewModel reportAllPaymentsViewModel = new CashFlowReportViewModel();
+
+                reportAllPaymentsViewModel.Balance = balance;
+
+                double AmountTotalRevenue = 0;
+                double AmountTotalExpense = 0;
+                double BalanceLeft = balance;
+
+                resultList.Add(reportAllPaymentsViewModel);
+
+                foreach (var payment in payments)
+                {
+                    CashFlowReportViewModel entity = new CashFlowReportViewModel();
+
+                    AmountTotalExpense = AmountTotalExpense + payment.AmountPayment;
+                    BalanceLeft = BalanceLeft - AmountTotalExpense;
+                    entity.RowDate = payment.PaymentDate;
+                    entity.RowDateText = payment.PaymentDate.ToString("dd/MM/yyyy");
+                    entity.ValueExpense = payment.AmountPayment;
+                    entity.Balance = BalanceLeft;
+
+                    resultList.Add (entity);
+                }
+
+                foreach (var sale in sales)
+                {
+                    CashFlowReportViewModel entity = new CashFlowReportViewModel();
+
+                    AmountTotalRevenue = AmountTotalRevenue + sale.AmountSale;
+                    BalanceLeft = BalanceLeft + AmountTotalRevenue;
+                    entity.RowDate = sale.SaleDate;
+                    entity.RowDateText = sale.SaleDate.ToString("dd/MM/yyyy");
+                    entity.ValueRevenue = sale.AmountSale;
+                    entity.Balance = BalanceLeft;
+
+                    resultList.Add(entity);
+                }
+            }
+            else if(onlyExpense == true)
+            {                
+
+                var payments = _reportRepository.GetAllPaymentsCashFlow(inicialDate, finalDate);
+
+                var balance = _reportRepository.GetInicialAmout();
+
+                CashFlowReportViewModel reportAllPaymentsViewModel = new CashFlowReportViewModel();
+
+                reportAllPaymentsViewModel.Balance = balance;
+
+                double AmountTotal = 0;
+                double BalanceLeft = balance;
+
+                resultList.Add(reportAllPaymentsViewModel);
+
+                foreach (var payment in payments)
+                {
+                    CashFlowReportViewModel entity = new CashFlowReportViewModel();
+
+                    AmountTotal = payment.AmountPayment;
+                    BalanceLeft = BalanceLeft - AmountTotal;
+                    entity.RowDate = payment.PaymentDate;
+                    entity.RowDateText = payment.PaymentDate.ToString("dd/MM/yyyy");
+                    entity.ValueExpense = payment.AmountPayment;
+                    entity.Balance = BalanceLeft;
+
+                    resultList.Add(entity);
+                }
+            }
+            else if (onlyRevenue)
+            {
+                var sales = _reportRepository.GetAllSalesForCashFlow(inicialDate, finalDate);
+                
+
+                var balance = _reportRepository.GetInicialAmout();
+
+                CashFlowReportViewModel reportAllPaymentsViewModel = new CashFlowReportViewModel();
+
+                reportAllPaymentsViewModel.Balance = balance;
+
+                double AmountTotal = 0;
+                double BalanceLeft = balance;
+
+                resultList.Add(reportAllPaymentsViewModel);                
+
+                foreach (var sale in sales)
+                {
+                    CashFlowReportViewModel entity = new CashFlowReportViewModel();
+
+                    AmountTotal = sale.AmountSale;
+                    BalanceLeft = BalanceLeft + AmountTotal;
+                    entity.RowDate = sale.SaleDate;
+                    entity.RowDateText = sale.SaleDate.ToString("dd/MM/yyyy");
+                    entity.ValueRevenue = sale.AmountSale;
+                    entity.Balance = BalanceLeft;
+
+                    resultList.Add(entity);
+                }
+            }
+            
 
             return resultList;
         }

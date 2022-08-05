@@ -11,6 +11,7 @@ namespace FashionRecycle.API.Core.Interface
     public interface IReportBusiness
     {
         List<ReportAllSalesResumedViewModel> GetAllSalesResumed(ReportSalesInputModel inputModel);
-        List<ReportAllPaymentsViewModel> GellAllPaymentsReport(string inicialDate, string finalDate, int idPaymentType);
+        List<ReportAllPaymentsViewModel> GellAllPaymentsReport(string inicialDate, string finalDate, int idPaymentType, int filtertype);
+        List<CashFlowReportViewModel> CashFlowReport(string inicialDate, string finalDate, bool onlyRevenue, bool onlyExpense);
     }
 }

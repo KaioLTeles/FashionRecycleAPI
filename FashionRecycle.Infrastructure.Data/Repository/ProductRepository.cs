@@ -265,7 +265,9 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                      A.PRICESALE,
                                                                      A.IDPARTNER,
                                                                      B.[NAME] AS NAMEPARTNER,
-                                                                     A.AMOUNTINVENTORY
+                                                                     A.AMOUNTINVENTORY,
+                                                                     A.ALTERNATIVE_ID,
+                                                                     A.MODEL
                                                             FROM PRODUCT A
                                                             INNER JOIN [PARTNER] B
                                                             ON A.IDPARTNER = B.ID                                                        
@@ -288,11 +290,15 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                     entity.Brand = dt.Rows[i]["BRAND"].ToString();
                     entity.PriceSale = double.Parse(dt.Rows[i]["PRICESALE"].ToString());
                     entity.AmountInventory = int.Parse(dt.Rows[i]["AMOUNTINVENTORY"].ToString());
+                    entity.AlternativeId = dt.Rows[i]["ALTERNATIVE_ID"].ToString();
+                    entity.Model = dt.Rows[i]["MODEL"].ToString();
 
                     partnerEntity.Id = int.Parse(dt.Rows[i]["IDPARTNER"].ToString());
                     partnerEntity.Name = dt.Rows[i]["NAMEPARTNER"].ToString();
 
                     entity.Partner = partnerEntity;
+
+                    entity.Name = entity.AlternativeId + "-" + entity.Name + "-" + entity.Model;
 
                     result.Add(entity);
                 }
