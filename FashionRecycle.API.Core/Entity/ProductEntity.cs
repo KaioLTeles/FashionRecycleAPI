@@ -23,5 +23,6 @@ namespace FashionRecycle.API.Core.Entity
         public string? AlternativeId { get; set; }
         public int BrandId { get; set; }
         public bool Active { get; set; }
+        public double Margim { get; set; }
     }
 }

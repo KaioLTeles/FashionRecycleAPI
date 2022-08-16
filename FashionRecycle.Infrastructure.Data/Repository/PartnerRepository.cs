@@ -39,7 +39,8 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                      STREETNUMBER,
                                                                      CEP,
                                                                      ACTIVE,
-                                                                     CREATIONDATE
+                                                                     CREATIONDATE,
+                                                                     DATEOFBIRTH
                                                             FROM [PARTNER]
                                                             WHERE ID = @PARTNERID", con))
                 {
@@ -61,6 +62,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                 result.CEP = dt.Rows[0]["CEP"].ToString();
                 result.Active = bool.Parse(dt.Rows[0]["ACTIVE"].ToString());
                 result.CreationDate = DateTime.Parse(dt.Rows[0]["CREATIONDATE"].ToString());
+                result.DateOfBirth = DateTime.Parse(dt.Rows[0]["DATEOFBIRTH"].ToString());
 
             }
 
@@ -142,7 +144,8 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                                         @STREETNUMBER, 
                                                                                         @CEP, 
                                                                                         @ACTIVE, 
-                                                                                        GETDATE())", con))
+                                                                                        GETDATE(),
+                                                                                        @DATEOFBIRTH)", con))
                 {
                     command.Parameters.Add("@NAME", SqlDbType.VarChar).Value = partnerEntity.Name;
                     command.Parameters.Add("@EMAIL", SqlDbType.VarChar).Value = partnerEntity.Email;
@@ -153,6 +156,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                     command.Parameters.Add("@STREETNUMBER", SqlDbType.VarChar).Value = partnerEntity.StreetNumber;
                     command.Parameters.Add("@CEP", SqlDbType.VarChar).Value = partnerEntity.CEP;
                     command.Parameters.Add("@ACTIVE", SqlDbType.Bit).Value = partnerEntity.Active == true ? 1 : 0;
+                    command.Parameters.Add("@DATEOFBIRTH", SqlDbType.DateTime).Value = partnerEntity.DateOfBirth;
                     command.ExecuteNonQuery();
                 }
             }
@@ -171,7 +175,8 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                                        [ADDRESS] = @ADDRESS,
                                                                                        STREETNUMBER = @STREETNUMBER,
                                                                                        CEP = @CEP,
-                                                                                       ACTIVE = @ACTIVE
+                                                                                       ACTIVE = @ACTIVE,
+                                                                                       DATEOFBIRTH = @DATEOFBIRTH
                                                                     WHERE ID = @PARTNERID", con))
                 {
 
@@ -185,6 +190,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                     command.Parameters.Add("@STREETNUMBER", SqlDbType.VarChar).Value = partnerEntity.StreetNumber;
                     command.Parameters.Add("@CEP", SqlDbType.VarChar).Value = partnerEntity.CEP;
                     command.Parameters.Add("@ACTIVE", SqlDbType.Bit).Value = partnerEntity.Active == true ? 1 : 0;
+                    command.Parameters.Add("@DATEOFBIRTH", SqlDbType.DateTime).Value = partnerEntity.DateOfBirth;
                     command.ExecuteNonQuery();
                 }
             }

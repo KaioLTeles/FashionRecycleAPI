@@ -14,5 +14,6 @@ namespace FashionRecycle.API.Core.Entity
         public string? Email { get; set; }        
         public int RoleId { get; set; }
         public bool Active { get; set; }
+        public bool FirstLogin { get; set; }
     }
 }

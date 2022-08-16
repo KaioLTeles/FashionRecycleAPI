@@ -14,5 +14,6 @@ namespace FashionRecycle.API.Core.Entity
         public DateTime PaymentDate { get; set; }
         public bool Active { get; set; }
         public bool PaymentMade { get; set; }
+        public bool RecurringPayment { get; set; }
     }
 }

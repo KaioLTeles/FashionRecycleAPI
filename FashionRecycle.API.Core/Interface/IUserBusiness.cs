@@ -13,5 +13,8 @@ namespace FashionRecycle.API.Core.Interface
     {
         void CreateUser(CreateUserInputModel createUserInputModel);
         LoginViewModel Login(LoginInputModel loginInputModel);
+        void ResetPassword(int userId, string password);
+        List<UserEntity> GetAllUserByFilter(string name, string email);
+        UserEntity GetUser(int id);
     }
 }

@@ -83,5 +83,21 @@ namespace FashionRecycle.API.Controllers
             }
         }
 
+
+        [HttpGet("getProductByPartnerForSale")]
+        public IActionResult GetProductByPartnerForSale(int idPartner)
+        {
+            try
+            {
+                var result = _productBusiness.GetProductByPartnerForSale(idPartner);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError("Erro ao buscar os produtos disponiveis para venda - ", ex);
+                return BadRequest("Erro ao buscar os produtos disponiveis para venda favor contactar a TI");
+            }
+        }
+
     }
 }

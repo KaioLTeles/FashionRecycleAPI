@@ -16,5 +16,6 @@ namespace FashionRecycle.API.Core.ViewModel
         public DateTime PaymentDate { get; set; }
         public string PaymentDateFormated { get; set; }
         public bool paymentMade { get; set; }
+        public bool recurringPayment { get; set; }
     }
 }

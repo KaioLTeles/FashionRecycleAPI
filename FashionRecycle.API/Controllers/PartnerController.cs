@@ -34,8 +34,8 @@ namespace FashionRecycle.API.Controllers
             }
             catch (Exception ex)
             {
-                Logger.WriteError("Erro ao buscar a lista de parceiros - ", ex);
-                return BadRequest("Erro ao buscar a lista de parceiros favor contactar a TI");
+                Logger.WriteError("Erro ao buscar a lista de Fornecedor - ", ex);
+                return BadRequest("Erro ao buscar a lista de Fornecedor favor contactar a TI");
             }
         }
 
@@ -49,8 +49,8 @@ namespace FashionRecycle.API.Controllers
             }
             catch (Exception ex)
             {
-                Logger.WriteError("Erro ao buscar os dados do parceiro - ", ex);
-                return BadRequest("Erro ao buscar os dados do parceiro favor contactar a TI");
+                Logger.WriteError("Erro ao buscar os dados do Fornecedor - ", ex);
+                return BadRequest("Erro ao buscar os dados do Fornecedor favor contactar a TI");
             }
         }
 
@@ -60,12 +60,12 @@ namespace FashionRecycle.API.Controllers
             try
             {
                 _partnerBusiness.AlterOrCreatePartner(inputModel);
-                return Ok("Parceiro processado com sucesso!");
+                return Ok("Fornecedor processado com sucesso!");
             }
             catch (Exception ex)
             {
-                Logger.WriteError("Erro ao criar/alterar o parceiro " + inputModel.id + " - ", ex);
-                return BadRequest("Erro ao criar/alterar o parceiro favor contactar a TI");
+                Logger.WriteError("Erro ao criar/alterar o Fornecedor " + inputModel.id + " - ", ex);
+                return BadRequest("Erro ao criar/alterar o Fornecedor favor contactar a TI");
             }
         }
 
@@ -79,8 +79,8 @@ namespace FashionRecycle.API.Controllers
             }
             catch (Exception ex)
             {
-                Logger.WriteError("Erro ao buscar os dados do parceiro - ", ex);
-                return BadRequest("Erro ao buscar os dados do parceiro favor contactar a TI");
+                Logger.WriteError("Erro ao buscar os dados do Fornecedor - ", ex);
+                return BadRequest("Erro ao buscar os dados do Fornecedor favor contactar a TI");
             }
         }
     }

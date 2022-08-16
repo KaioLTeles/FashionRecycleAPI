@@ -14,5 +14,7 @@ namespace FashionRecycle.API.Core.InputModel
         public double amount { get; set; }
         public string? paymentDate { get; set; }       
         public bool paymentMade { get; set; }
+        public bool recurringPayment { get; set; }
+        
     }
 }

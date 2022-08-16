@@ -15,11 +15,16 @@ namespace FashionRecycle.Application.Business
     {
         private readonly IPaymentRepository _paymentRepository;
         public readonly IMapper _mapper;
+        private readonly IPartnerBusiness _partnerBusiness;
+        private readonly IProductBusiness _productBusiness;
 
-        public PaymentBusiness(IPaymentRepository paymentRepository, IMapper mapper)
+        public PaymentBusiness(IPaymentRepository paymentRepository, IMapper mapper, IPartnerBusiness partnerBusiness, IProductBusiness productBusiness)
         {
             _paymentRepository = paymentRepository;
             _mapper = mapper;
+            _partnerBusiness = partnerBusiness;
+            _productBusiness = productBusiness;
+            _productBusiness = productBusiness;
         }
 
         public PaymentViewModel GetPaymentById(int idPayment)
@@ -97,5 +102,28 @@ namespace FashionRecycle.Application.Business
             }
             
         }
+
+        public void CreatePaymentPartner(List<SalesItemsEntity> salesItemsEntity)
+        {
+            foreach(var item in salesItemsEntity)
+            {
+
+                var partner = _partnerBusiness.GetPartnerById(item.IdPartner);
+
+                var product = _productBusiness.GetProductById(item.IdProduct);
+
+                PaymentsEntity entity = new PaymentsEntity
+                {
+                    PaymenyType = new PaymenyTypeEntity { Id = 12 },
+                    PaymentDate = DateTime.Now.AddDays(7),
+                    Active = true,
+                    Name = "Pagamento de Comissão De Fornecedor - " + partner.Name + " - Produto " + product.AlternativeId + " - " + product.Name + " " + product.Model,
+                    Amount = item.PriceSale
+                };
+
+                _paymentRepository.CreatePayment(entity);
+            }
+        }
+
     }
 }

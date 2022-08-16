@@ -16,5 +16,6 @@ namespace FashionRecycle.API.Core.Interface
         List<ProductEntity> GetProductAllForSale();
         void UpdateProductStatus(int idProduct);
         int CoutPartnerPorducts(int partnerId);
+        List<ProductEntity> GetProductByPartnerForSale(int partnerId);
     }
 }

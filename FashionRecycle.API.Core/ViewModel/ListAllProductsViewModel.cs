@@ -22,5 +22,8 @@ namespace FashionRecycle.API.Core.ViewModel
         public string? Colour { get; set; }
         public int BrandId { get; set; }
         public bool Active { get; set; }
+        public DateTime CreationDate { get; set; }
+        public string CreationDateFormat { get; set; }
+        public double Margim { get; set; }
     }
 }

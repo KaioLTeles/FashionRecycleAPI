@@ -55,6 +55,8 @@ namespace FashionRecycle.Application.Business
 
                 var result = _mapper.Map<PartnerViewModel>(resultEntity);
 
+                result.DateOfBirthFormat = resultEntity.DateOfBirth.ToString("yyyy-MM-dd");
+
                 return result;
             }
             else

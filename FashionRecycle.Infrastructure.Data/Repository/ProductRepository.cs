@@ -55,7 +55,8 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                      A.COLOUR,
                                                                      A.OBSERVATION,
                                                                      A.BRANDID,
-                                                                     A.PRODUCTSTATUS
+                                                                     A.PRODUCTSTATUS,
+                                                                     A.MARGIM
                                                             FROM PRODUCT A
                                                             INNER JOIN [PARTNER] B
                                                             ON A.IDPARTNER = B.ID
@@ -83,6 +84,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                 result.Model = dt.Rows[0]["MODEL"].ToString();
                 result.Colour = dt.Rows[0]["COLOUR"].ToString();
                 result.Observation = dt.Rows[0]["OBSERVATION"].ToString();
+                result.Margim = double.Parse(dt.Rows[0]["MARGIM"].ToString());
 
                 partnerEntity.Id = int.Parse(dt.Rows[0]["IDPARTNER"].ToString());
                 partnerEntity.Name = dt.Rows[0]["NAMEPARTNER"].ToString();
@@ -124,7 +126,8 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                      A.ALTERNATIVE_ID,
                                                                      A.SERIALNUMBER,
                                                                      A.MODEL,
-                                                                     A.COLOUR
+                                                                     A.COLOUR,
+                                                                     A.MARGIM
                                                             FROM PRODUCT A
                                                             INNER JOIN [PARTNER] B
                                                             ON A.IDPARTNER = B.ID
@@ -161,6 +164,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                     entity.PriceSale = double.Parse(dt.Rows[i]["PRICESALE"].ToString());
                     entity.Active = bool.Parse(dt.Rows[i]["ACTIVE"].ToString());
                     entity.CreationDate = DateTime.Parse(dt.Rows[i]["CREATIONDATE"].ToString());
+                    entity.Margim = double.Parse(dt.Rows[i]["MARGIM"].ToString());
 
                     partnerEntity.Id = int.Parse(dt.Rows[i]["IDPARTNER"].ToString());
                     partnerEntity.Name = dt.Rows[i]["NAMEPARTNER"].ToString();
@@ -195,20 +199,22 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                                         @COLOUR,
                                                                                         @OBSERVATION,
                                                                                         @ALTERNATIVE_ID,
-                                                                                        @BRANDID)", con))
+                                                                                        @BRANDID,
+                                                                                        @MARGIM)", con))
                 {
-                    command.Parameters.Add("@NAME", SqlDbType.VarChar).Value = productEntity.Name;                                 
+                    command.Parameters.Add("@NAME", SqlDbType.VarChar).Value = productEntity.Name == null || productEntity.Name == string.Empty ? DBNull.Value : productEntity.Name;                                 
                     command.Parameters.Add("@PRICEPARTNER", SqlDbType.Decimal).Value = productEntity.PricePartner;
                     command.Parameters.Add("@PRICESALE", SqlDbType.Decimal).Value = productEntity.PriceSale;
                     command.Parameters.Add("@IDPARTNER", SqlDbType.Int).Value = productEntity.Partner.Id;                                        
                     command.Parameters.Add("@ACTIVE", SqlDbType.Bit).Value = productEntity.Active == true ? 1 : 0;
                     command.Parameters.Add("@PRODUCTSTATUS", SqlDbType.Int).Value = productEntity.ProductStatus;
-                    command.Parameters.Add("@SERIALNUMBER", SqlDbType.VarChar).Value = productEntity.SerialNumber;
+                    command.Parameters.Add("@SERIALNUMBER", SqlDbType.VarChar).Value = productEntity.SerialNumber == null || productEntity.SerialNumber == string.Empty ? DBNull.Value : productEntity.SerialNumber;
                     command.Parameters.Add("@COLOUR", SqlDbType.VarChar).Value = productEntity.Colour;
-                    command.Parameters.Add("@OBSERVATION", SqlDbType.VarChar).Value = productEntity.Observation;
+                    command.Parameters.Add("@OBSERVATION", SqlDbType.VarChar).Value = productEntity.Observation == null || productEntity.Observation == string.Empty ? DBNull.Value : productEntity.Observation;
                     command.Parameters.Add("@ALTERNATIVE_ID", SqlDbType.VarChar).Value = productEntity.AlternativeId;
-                    command.Parameters.Add("@MODEL", SqlDbType.VarChar).Value = productEntity.Model;
+                    command.Parameters.Add("@MODEL", SqlDbType.VarChar).Value = productEntity.Model == null || productEntity.Model == string.Empty ? DBNull.Value : productEntity.Model;
                     command.Parameters.Add("@BRANDID", SqlDbType.Int).Value = productEntity.BrandId;
+                    command.Parameters.Add("@MARGIM", SqlDbType.Decimal).Value = productEntity.Margim;
                     command.ExecuteNonQuery();
                 }
             }
@@ -229,22 +235,24 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                                        SERIALNUMBER = @SERIALNUMBER,                                                                                        
                                                                                        MODEL = @MODEL,
                                                                                        COLOUR = @COLOUR,
-                                                                                       OBSERVATION = @OBSERVATION                                                                                    
+                                                                                       OBSERVATION = @OBSERVATION
+                                                                                       MARGIM = @MARGIM
                                                                     WHERE ID = @PRODUCTID", con))
                 {
 
                     command.Parameters.Add("@PRODUCTID", SqlDbType.Int).Value = productEntity.Id;
-                    command.Parameters.Add("@NAME", SqlDbType.VarChar).Value = productEntity.Name;                    
+                    command.Parameters.Add("@NAME", SqlDbType.VarChar).Value = productEntity.Name == null || productEntity.Name == string.Empty ? DBNull.Value : productEntity.Name;
                     command.Parameters.Add("@PRICEPARTNER", SqlDbType.Decimal).Value = productEntity.PricePartner;
                     command.Parameters.Add("@PRICESALE", SqlDbType.Decimal).Value = productEntity.PriceSale;
                     command.Parameters.Add("@IDPARTNER", SqlDbType.Int).Value = productEntity.Partner.Id;                   
                     command.Parameters.Add("@ACTIVE", SqlDbType.Bit).Value = productEntity.Active == true ? 1 : 0;
                     command.Parameters.Add("@PRODUCTSTATUS", SqlDbType.Int).Value = productEntity.ProductStatus;
                     command.Parameters.Add("@BRANDID", SqlDbType.Int).Value = productEntity.BrandId;
-                    command.Parameters.Add("@SERIALNUMBER", SqlDbType.VarChar).Value = productEntity.SerialNumber;
-                    command.Parameters.Add("@COLOUR", SqlDbType.VarChar).Value = productEntity.Colour;
-                    command.Parameters.Add("@OBSERVATION", SqlDbType.VarChar).Value = productEntity.Observation;
-                    command.Parameters.Add("@MODEL", SqlDbType.VarChar).Value = productEntity.Model;                    
+                    command.Parameters.Add("@SERIALNUMBER", SqlDbType.VarChar).Value = productEntity.SerialNumber == null || productEntity.SerialNumber == string.Empty ? DBNull.Value : productEntity.SerialNumber;
+                    command.Parameters.Add("@COLOUR", SqlDbType.VarChar).Value = productEntity.Colour == null || productEntity.Colour == string.Empty ? DBNull.Value : productEntity.Colour;
+                    command.Parameters.Add("@OBSERVATION", SqlDbType.VarChar).Value = productEntity.Observation == null || productEntity.Observation == string.Empty ? DBNull.Value : productEntity.Observation;
+                    command.Parameters.Add("@MODEL", SqlDbType.VarChar).Value = productEntity.Model;
+                    command.Parameters.Add("@MARGIM", SqlDbType.Decimal).Value = productEntity.Margim;
                     command.ExecuteNonQuery();
                 }
             }
@@ -346,6 +354,65 @@ namespace FashionRecycle.Infrastructure.Data.Repository
             }
 
             return dt.Rows.Count;
+        }
+
+        public List<ProductEntity> GetProductByPartnerForSale(int partnerId)
+        {
+            List<ProductEntity> result = new List<ProductEntity>();
+
+            DataTable dt = new DataTable();
+
+            using (SqlConnection con = new SqlConnection(_configuration["ConnectionStrings:Default"]))
+            {
+                con.Open();
+                using (SqlCommand command = new SqlCommand(@"SELECT  A.ID,
+                                                                     A.[NAME],
+                                                                     A.BRAND,                                                                                                                                          
+                                                                     A.PRICESALE,
+                                                                     A.IDPARTNER,
+                                                                     B.[NAME] AS NAMEPARTNER,
+                                                                     A.AMOUNTINVENTORY,
+                                                                     A.ALTERNATIVE_ID,
+                                                                     A.MODEL
+                                                            FROM PRODUCT A
+                                                            INNER JOIN [PARTNER] B
+                                                            ON A.IDPARTNER = B.ID                                                        
+                                                            WHERE A.ACTIVE = 1 AND A.PRODUCTSTATUS = 1 AND A.IDPARTNER = @IDPARTNER", con))
+                {
+                    command.Parameters.Add("@IDPARTNER", SqlDbType.Int).Value = partnerId;
+                    dt.Load(command.ExecuteReader());
+                }
+
+            }
+            if (dt.Rows.Count > 0)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    ProductEntity entity = new ProductEntity();
+                    PartnerEntity partnerEntity = new PartnerEntity();
+
+
+                    entity.Id = int.Parse(dt.Rows[i]["ID"].ToString());
+                    entity.Name = dt.Rows[i]["NAME"].ToString();
+                    entity.Brand = dt.Rows[i]["BRAND"].ToString();
+                    entity.PriceSale = double.Parse(dt.Rows[i]["PRICESALE"].ToString());
+                    entity.AmountInventory = int.Parse(dt.Rows[i]["AMOUNTINVENTORY"].ToString());
+                    entity.AlternativeId = dt.Rows[i]["ALTERNATIVE_ID"].ToString();
+                    entity.Model = dt.Rows[i]["MODEL"].ToString();
+
+                    partnerEntity.Id = int.Parse(dt.Rows[i]["IDPARTNER"].ToString());
+                    partnerEntity.Name = dt.Rows[i]["NAMEPARTNER"].ToString();
+
+                    entity.Partner = partnerEntity;
+
+                    entity.Name = entity.AlternativeId + "-" + entity.Name + "-" + entity.Model;
+
+                    result.Add(entity);
+                }
+
+            }
+
+            return result;
         }
     }
 }

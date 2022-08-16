@@ -10,5 +10,6 @@ namespace FashionRecycle.API.Core.Enums
     {
         LoginSucess = 1,
         LoginFail = 2,
+        UserBlocked = 3,
     }
 }

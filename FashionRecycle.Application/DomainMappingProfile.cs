@@ -75,6 +75,7 @@ namespace FashionRecycle.Application
                 .ForMember(x => x.StreetNumber, x => x.MapFrom(d => d.StreetNumber))
                 .ForMember(x => x.CEP, x => x.MapFrom(d => d.CEP))
                 .ForMember(x => x.Active, x => x.MapFrom(d => d.Active))
+                .ForMember(x => x.DateOfBirth, x => x.MapFrom(d => d.DateOfBirth))
                 .ReverseMap();
 
             CreateMap<CreatePartnerInputModel, PartnerEntity>()
@@ -88,6 +89,7 @@ namespace FashionRecycle.Application
                .ForMember(x => x.StreetNumber, x => x.MapFrom(d => d.streetNumber))
                .ForMember(x => x.CEP, x => x.MapFrom(d => d.cep))
                .ForMember(x => x.Active, x => x.MapFrom(d => d.active))
+               .ForMember(x => x.DateOfBirth, x => x.MapFrom(d => d.dateOfBirth))
                .ReverseMap();
 
             CreateMap<PartnerResumeListViewModel, PartnerEntity>()
@@ -146,6 +148,8 @@ namespace FashionRecycle.Application
                .ForMember(x => x.Observation, x => x.MapFrom(d => d.Observation))
                .ForMember(x => x.AlternativeId, x => x.MapFrom(d => d.AlternativeId))
                .ForMember(x => x.BrandId, x => x.MapFrom(d => d.BrandId))
+               .ForMember(x => x.CreationDate, x => x.MapFrom(d => d.CreationDate))
+               .ForMember(x => x.Margim, x => x.MapFrom(d => d.Margim))
                .ReverseMap();
 
             CreateMap<ListAllProductsViewModel, ProductEntity>()
@@ -161,7 +165,9 @@ namespace FashionRecycle.Application
                .ForMember(x => x.AlternativeId, x => x.MapFrom(d => d.AlternativeId))
                .ForMember(x => x.SerialNumber, x => x.MapFrom(d => d.SerialNumber))
                .ForMember(x => x.Model, x => x.MapFrom(d => d.Model))
-                .ForMember(x => x.BrandId, x => x.MapFrom(d => d.BrandId))
+               .ForMember(x => x.BrandId, x => x.MapFrom(d => d.BrandId))
+               .ForMember(x => x.CreationDate, x => x.MapFrom(d => d.CreationDate))
+               .ForMember(x => x.Margim, x => x.MapFrom(d => d.Margim))
                .ReverseMap();
 
             CreateMap<CreateProductInputModel, ProductEntity>()
@@ -173,6 +179,7 @@ namespace FashionRecycle.Application
               .ForMember(x => x.Partner, x => x.MapFrom(d => new PartnerEntity { Id = d.partnerId }))
               .ForMember(x => x.Active, x => x.MapFrom(d => d.active))
               .ForMember(x => x.ProductStatus, x => x.MapFrom(d => d.productStatus))
+              .ForMember(x => x.Margim, x => x.MapFrom(d => d.margim))
 
               .ReverseMap();
 
@@ -210,6 +217,7 @@ namespace FashionRecycle.Application
                 .ForMember(x => x.PaymentDate, x => x.MapFrom(d => d.PaymentDate))
                 .ForMember(x => x.Name, x => x.MapFrom(d => d.Name))
                 .ForMember(x => x.PaymentMade, x => x.MapFrom(d => d.paymentMade))
+                .ForMember(x => x.RecurringPayment, x => x.MapFrom(d => d.recurringPayment))
                 .ReverseMap();
 
             CreateMap<CreatePaymentInputModel, PaymentsEntity>()
@@ -219,6 +227,7 @@ namespace FashionRecycle.Application
                 .ForMember(x => x.Amount, x => x.MapFrom(d => d.amount))
                 .ForMember(x => x.PaymentMade, x => x.MapFrom(d => d.paymentMade))
                 .ForMember(x => x.PaymentDate, x => x.MapFrom(d => d.paymentDate))
+                .ForMember(x => x.RecurringPayment, x => x.MapFrom(d => d.recurringPayment))
                 .ReverseMap();
 
             CreateMap<ProviderResumeListViewModel, ProviderEntity>()
@@ -237,6 +246,14 @@ namespace FashionRecycle.Application
                 .ForMember(x => x.Id, x => x.MapFrom(d => d.id))
                 .ForMember(x => x.Name, x => x.MapFrom(d => d.name))
               .ReverseMap();
+
+            CreateMap<AlterUserInputModel, UserEntity>()
+                .ForMember(x => x.Id, x => x.MapFrom(d => d.idUser))
+                .ForMember(x => x.Name, x => x.MapFrom(d => d.name))
+                .ForMember(x => x.UserName, x => x.MapFrom(d => d.userName))
+                .ForMember(x => x.Email, x => x.MapFrom(d => d.email))
+                .ForMember(x => x.Password, x => x.MapFrom(d => d.password))
+                .ReverseMap();
         }
     }
 }

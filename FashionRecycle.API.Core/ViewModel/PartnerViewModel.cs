@@ -18,5 +18,7 @@ namespace FashionRecycle.API.Core.ViewModel
         public string? StreetNumber { get; set; }
         public string? CEP { get; set; }
         public bool Active { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public string? DateOfBirthFormat { get; set; }
     }
 }

@@ -31,6 +31,8 @@ namespace FashionRecycle.Application.Business
 
                 var result = _mapper.Map<ProductViewModel>(resultEntity);
 
+                result.CreationDateFormat = resultEntity.CreationDate.ToString("dd/MM/yyyy");
+
                 return result;
             }
             else
@@ -52,6 +54,8 @@ namespace FashionRecycle.Application.Business
                     var entity = _mapper.Map<ListAllProductsViewModel>(product);
                     if (entity != null)
                     {
+
+                        entity.CreationDateFormat = entity.CreationDate.ToString("dd/MM/yyyy");
                         resultList.Add(entity);
                     }
                 }
@@ -107,6 +111,26 @@ namespace FashionRecycle.Application.Business
             List<ListProductsForSaleViewModel> resultList = new List<ListProductsForSaleViewModel>();
 
             var resultEntity = _productRepository.GetProductAllForSale();
+
+            foreach (var product in resultEntity)
+            {
+                var entity = _mapper.Map<ListProductsForSaleViewModel>(product);
+                if (entity != null)
+                {
+                    resultList.Add(entity);
+                }
+            }
+
+            return resultList;
+
+        }
+
+        public List<ListProductsForSaleViewModel> GetProductByPartnerForSale(int partnerId)
+        {
+
+            List<ListProductsForSaleViewModel> resultList = new List<ListProductsForSaleViewModel>();
+
+            var resultEntity = _productRepository.GetProductByPartnerForSale(partnerId);
 
             foreach (var product in resultEntity)
             {

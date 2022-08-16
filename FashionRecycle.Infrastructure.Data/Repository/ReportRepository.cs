@@ -114,7 +114,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
             }
             else if (filtertype == 3)
             {
-                commandApend = @"AND (CAST(A.PAYMENTDATE AS DATE)  < CAST(GETDATE() AS DATE))";
+                commandApend = @"AND (CAST(A.PAYMENTDATE AS DATE)  > CAST(GETDATE() AS DATE))";
             }
 
 

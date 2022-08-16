@@ -36,26 +36,41 @@ namespace FashionRecycle.Application.Business
 
             userEntity.Password = Cryptography.ComputeSha256Hash(userEntity.Password);
 
-            _userRepository.CreateUser(userEntity);                      
+            _userRepository.CreateUser(userEntity);
         }
 
         public LoginViewModel Login(LoginInputModel loginInputModel)
-        {            
+        {
             var encryptedPassword = Cryptography.ComputeSha256Hash(loginInputModel.Password);
 
-            var user = _userRepository.GetUserByUserName(loginInputModel.Username);                                            
+            var user = _userRepository.GetUserByUserName(loginInputModel.Username);
 
             if (user != null)
             {
-               if(user.Password == encryptedPassword)
+                if (user.Active == true)
                 {
-                    return new LoginViewModel
+                    if (user.Password == encryptedPassword)
                     {
-                        Email = user.Email,
-                        Token = GenerateJwtToken(user.Email, user.RoleId.ToString()),
-                        LoginStatus = (int)LoginStatusEnum.LoginSucess,
-                        Message = "Login realizado com sucesso!"
-                    };
+
+                        return new LoginViewModel
+                        {
+                            Email = user.Email,
+                            Token = GenerateJwtToken(user.Email, user.RoleId.ToString()),
+                            LoginStatus = (int)LoginStatusEnum.LoginSucess,
+                            Message = "Login realizado com sucesso!",
+                            FirstLogin = user.FirstLogin
+                        };
+                    }
+                    else
+                    {
+                        return new LoginViewModel
+                        {
+                            Email = String.Empty,
+                            Token = String.Empty,
+                            LoginStatus = (int)LoginStatusEnum.LoginFail,
+                            Message = "Usuario ou senha incorreto!"
+                        };
+                    }
                 }
                 else
                 {
@@ -63,8 +78,8 @@ namespace FashionRecycle.Application.Business
                     {
                         Email = String.Empty,
                         Token = String.Empty,
-                        LoginStatus = (int)LoginStatusEnum.LoginFail,
-                        Message = "Usuario ou senha incorreto!"
+                        LoginStatus = (int)LoginStatusEnum.UserBlocked,
+                        Message = "Usuario bloqueado!"
                     };
                 }
             }
@@ -77,7 +92,7 @@ namespace FashionRecycle.Application.Business
                     LoginStatus = (int)LoginStatusEnum.LoginFail,
                     Message = "Usuario ou senha incorreto!"
                 };
-            }           
+            }
         }
         private string GenerateJwtToken(string email, string role)
         {
@@ -101,5 +116,49 @@ expires: DateTime.Now.AddMinutes(120), signingCredentials: credentials, claims: 
 
             return stringToken;
         }
+
+        public void ResetPassword(int userId, string password)
+        {
+            string newPassword = Cryptography.ComputeSha256Hash(password);
+
+            _userRepository.ResetPassword(userId, password);
+        }
+
+        public void AlterUser(AlterUserInputModel inputModel)
+        {
+            var encryptedPassword = Cryptography.ComputeSha256Hash(inputModel.password == String.Empty || inputModel.password == null ? "naoNulo" : inputModel.password);
+
+            var user = _userRepository.GetUserByUserName(inputModel.userName);
+
+            if (user != null)
+            {
+                var entity = _mapper.Map<UserEntity>(inputModel);
+
+                bool setFirstLogin = false;
+
+                if (inputModel.password != String.Empty || inputModel.password != null && encryptedPassword != user.Password)
+                {
+                    setFirstLogin = true;
+                }
+
+                _userRepository.AlterUser(entity, setFirstLogin);
+            }
+            else
+            {
+                throw new Exception("Objeto de input não pode ser nulo!");
+            }
+
+        }
+
+        public List<UserEntity> GetAllUserByFilter(string name, string email)
+        {
+            return _userRepository.GetAllUserByFilter(name, email);
+        }
+
+        public UserEntity GetUser(int id)
+        {
+            return _userRepository.GetUserById(id);
+        }
+
     }
 }

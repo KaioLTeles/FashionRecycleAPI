@@ -17,10 +17,21 @@ namespace FashionRecycle.API.Controllers
             _userBusiness = userBusiness;
         }
 
-        [HttpGetAttribute("getuser/{id}")]
+        [AllowAnonymous]
+        [HttpGet("getuser")]
         public IActionResult GetUser(int id)
         {
-            return Ok();
+            
+            try
+            {                                
+                var result = _userBusiness.GetUser(id);
+                return Ok(result);                
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError("Erro ao criar usuario - ", ex);
+                return BadRequest("Erro ao criar usuario favor contactar a TI");
+            }
         }
 
         [AllowAnonymous]
@@ -51,6 +62,22 @@ namespace FashionRecycle.API.Controllers
             catch(Exception ex)
             {
                 Logger.WriteError("Erro ao logar - ", ex);
+                return BadRequest("Erro ao logar favor contactar a TI");
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("getAllUserByFilter")]
+        public IActionResult GetAllUserByFilter(string name, string email)
+        {            
+            try
+            {
+                var result = _userBusiness.GetAllUserByFilter(name, email);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError("Erro ao buscar dados de usuario - ", ex);
                 return BadRequest("Erro ao logar favor contactar a TI");
             }
         }

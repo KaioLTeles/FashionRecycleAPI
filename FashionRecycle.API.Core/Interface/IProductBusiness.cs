@@ -14,5 +14,6 @@ namespace FashionRecycle.API.Core.Interface
         List<ListAllProductsViewModel> GetListProductAll(ListAllProductsInputModel listAllProductsInputModel);
         void AlterOrCreateProduct(CreateProductInputModel inputModel);
         List<ListProductsForSaleViewModel> GetProductAllForSale();
+        List<ListProductsForSaleViewModel> GetProductByPartnerForSale(int partnerId);
     }
 }

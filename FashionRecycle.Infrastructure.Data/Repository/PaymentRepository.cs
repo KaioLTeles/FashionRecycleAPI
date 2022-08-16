@@ -37,7 +37,8 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                      B.DESCRIPTION,
                                                                      A.AMOUNT,
                                                                      A.PAYMENTDATE,
-                                                                     A.PAYMENTMADE
+                                                                     A.PAYMENTMADE,
+                                                                     A.RECURRINGPATMENT
                                                             FROM PAYMENTS A                                                           
                                                             INNER JOIN PAYMENTTYPE B
                                                             ON A.IDPAYMENTTYPE = B.ID
@@ -54,7 +55,8 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                 result.Name = dt.Rows[0]["NAME"].ToString();
                 result.Amount = double.Parse(dt.Rows[0]["AMOUNT"].ToString());
                 result.PaymentMade = bool.Parse(dt.Rows[0]["PAYMENTMADE"].ToString());
-                result.PaymentDate = DateTime.Parse(dt.Rows[0]["PAYMENTDATE"].ToString());                    
+                result.PaymentDate = DateTime.Parse(dt.Rows[0]["PAYMENTDATE"].ToString());
+                result.RecurringPayment = bool.Parse(dt.Rows[0]["RECURRINGPATMENT"].ToString());
 
                 paymenyType.Id = int.Parse(dt.Rows[0]["IDPAYMENTTYPE"].ToString());
                 paymenyType.Description = dt.Rows[0]["DESCRIPTION"].ToString();
@@ -82,7 +84,8 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                      A.AMOUNT,
                                                                      A.PAYMENTDATE,
                                                                      A.PAYMENTMADE,
-                                                                     A.ACTIVE                                                                       
+                                                                     A.ACTIVE,
+                                                                     A.RECURRINGPATMENT
                                                             FROM PAYMENTS A                                                           
                                                             INNER JOIN PAYMENTTYPE B
                                                             ON A.IDPAYMENTTYPE = B.ID
@@ -107,6 +110,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                     payments.PaymentDate = DateTime.Parse(dt.Rows[i]["PAYMENTDATE"].ToString());
                     payments.Active = bool.Parse(dt.Rows[i]["ACTIVE"].ToString());
                     payments.PaymentMade = bool.Parse(dt.Rows[i]["PAYMENTMADE"].ToString());
+                    payments.RecurringPayment = bool.Parse(dt.Rows[i]["RECURRINGPATMENT"].ToString());
 
                     paymenyType.Id = int.Parse(dt.Rows[i]["IDPAYMENTTYPE"].ToString());
                     paymenyType.Description = dt.Rows[i]["DESCRIPTION"].ToString();
@@ -131,12 +135,13 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                                         @AMOUNT,
                                                                                         @PAYMENTDATE,                                                                                                                                                                                
                                                                                         1, 
-                                                                                        GETDATE(), 0)", con))
+                                                                                        GETDATE(), 0, @RECURRINGPATMENT)", con))
                 {
                     command.Parameters.Add("@NAME", SqlDbType.VarChar).Value = paymentsEntity.Name == "" ? DBNull.Value : paymentsEntity.Name;
                     command.Parameters.Add("@IDPAYMENTTYPE", SqlDbType.Int).Value = paymentsEntity.PaymenyType.Id;
                     command.Parameters.Add("@AMOUNT", SqlDbType.Decimal).Value = paymentsEntity.Amount;
                     command.Parameters.Add("@PAYMENTDATE", SqlDbType.DateTime).Value = paymentsEntity.PaymentDate;
+                    command.Parameters.Add("@RECURRINGPATMENT", SqlDbType.Bit).Value = paymentsEntity.RecurringPayment;
                     command.ExecuteNonQuery();
                 }
             }
@@ -151,7 +156,8 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                                        IDPAYMENTTYPE = @IDPAYMENTTYPE,
                                                                                        AMOUNT = @AMOUNT,
                                                                                        PAYMENTDATE = @PAYMENTDATE,
-                                                                                       PAYMENTMADE = @PAYMENTMADE
+                                                                                       PAYMENTMADE = @PAYMENTMADE,
+                                                                                       RECURRINGPATMENT = @RECURRINGPATMENT
                                                                     WHERE ID = @IDPAYMENT", con))
                 {
 
@@ -161,6 +167,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                     command.Parameters.Add("@PAYMENTDATE", SqlDbType.DateTime).Value = paymentsEntity.PaymentDate;                    
                     command.Parameters.Add("@IDPAYMENT", SqlDbType.Int).Value = paymentsEntity.Id;
                     command.Parameters.Add("@PAYMENTMADE", SqlDbType.Bit).Value = paymentsEntity.PaymentMade;
+                    command.Parameters.Add("@RECURRINGPATMENT", SqlDbType.Bit).Value = paymentsEntity.RecurringPayment;
                     command.ExecuteNonQuery();
                 }
             }

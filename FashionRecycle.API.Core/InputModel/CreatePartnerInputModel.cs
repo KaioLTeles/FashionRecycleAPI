@@ -18,5 +18,6 @@ namespace FashionRecycle.API.Core.InputModel
         public string? streetNumber { get; set; }
         public string? cep { get; set; }
         public bool active { get; set; }
+        public DateTime dateOfBirth { get; set; }
     }
 }
