@@ -14,6 +14,7 @@ namespace FashionRecycle.Application
                 .ForMember(x => x.Name, x => x.MapFrom(d => d.Name))
                 .ForMember(x => x.Email, x => x.MapFrom(d => d.Email))
                 .ForMember(x => x.Password, x => x.MapFrom(d => d.Password))
+                .ForMember(x => x.RoleId, x => x.MapFrom(d => d.RoleId))
                 .ReverseMap();
 
             CreateMap<UserViewModel, UserEntity>()
@@ -202,6 +203,7 @@ namespace FashionRecycle.Application
                 .ForMember(x => x.AmountSale, x => x.MapFrom(d => d.AmountSale))
                 .ForMember(x => x.IdPaymentMethod, x => x.MapFrom(d => d.IdPaymentMethod))
                 .ForMember(x => x.Observation, x => x.MapFrom(d => d.Observation))
+                .ForMember(x => x.NumberInstallments, x => x.MapFrom(d => d.NumberInstallments))
                 .ReverseMap();
 
             CreateMap<SaleItemsInputModel, SalesItemsEntity>()                
@@ -253,6 +255,8 @@ namespace FashionRecycle.Application
                 .ForMember(x => x.UserName, x => x.MapFrom(d => d.userName))
                 .ForMember(x => x.Email, x => x.MapFrom(d => d.email))
                 .ForMember(x => x.Password, x => x.MapFrom(d => d.password))
+                .ForMember(x => x.Active, x => x.MapFrom(d => d.active))
+                .ForMember(x => x.RoleId, x => x.MapFrom(d => d.roleId))
                 .ReverseMap();
         }
     }

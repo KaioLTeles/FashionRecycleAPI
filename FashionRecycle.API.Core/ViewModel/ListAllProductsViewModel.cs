@@ -25,5 +25,6 @@ namespace FashionRecycle.API.Core.ViewModel
         public DateTime CreationDate { get; set; }
         public string CreationDateFormat { get; set; }
         public double Margim { get; set; }
+        public string ProductStatusDescription { get; set; }
     }
 }

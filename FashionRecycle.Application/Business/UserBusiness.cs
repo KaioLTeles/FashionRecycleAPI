@@ -58,7 +58,8 @@ namespace FashionRecycle.Application.Business
                             Token = GenerateJwtToken(user.Email, user.RoleId.ToString()),
                             LoginStatus = (int)LoginStatusEnum.LoginSucess,
                             Message = "Login realizado com sucesso!",
-                            FirstLogin = user.FirstLogin
+                            FirstLogin = user.FirstLogin,
+                            RoleUser = user.RoleId
                         };
                     }
                     else
@@ -121,27 +122,23 @@ expires: DateTime.Now.AddMinutes(120), signingCredentials: credentials, claims: 
         {
             string newPassword = Cryptography.ComputeSha256Hash(password);
 
-            _userRepository.ResetPassword(userId, password);
+            _userRepository.ResetPassword(userId, newPassword);
         }
 
         public void AlterUser(AlterUserInputModel inputModel)
-        {
-            var encryptedPassword = Cryptography.ComputeSha256Hash(inputModel.password == String.Empty || inputModel.password == null ? "naoNulo" : inputModel.password);
-
+        {            
             var user = _userRepository.GetUserByUserName(inputModel.userName);
 
             if (user != null)
             {
-                var entity = _mapper.Map<UserEntity>(inputModel);
+                var entity = _mapper.Map<UserEntity>(inputModel);                               
 
-                bool setFirstLogin = false;
+                _userRepository.AlterUser(entity);
 
-                if (inputModel.password != String.Empty || inputModel.password != null && encryptedPassword != user.Password)
+                if (inputModel.password != String.Empty && inputModel.password != null)
                 {
-                    setFirstLogin = true;
+                    ResetPassword(user.Id, inputModel.password);
                 }
-
-                _userRepository.AlterUser(entity, setFirstLogin);
             }
             else
             {

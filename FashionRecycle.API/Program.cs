@@ -4,6 +4,8 @@ using FashionRecycle.Application;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.HttpOverrides;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +48,10 @@ builder.Services
                     (Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                   };
               });
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.KnownProxies.Add(IPAddress.Parse("93.188.166.8"));
+});
 
 var app = builder.Build();
 
@@ -56,9 +62,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
 app.UseCors("policy");
 
-app.UseHttpsRedirection();
+app.UseAuthentication();
+
+app.UseRouting();
 
 app.UseAuthorization();
 

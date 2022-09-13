@@ -1,9 +1,11 @@
 ﻿using FashionRecycle.API.Core.InputModel;
 using FashionRecycle.API.Core.Interface;
 using FashionRecycle.Application.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace FashionRecycle.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class BrandController : ControllerBase
     {

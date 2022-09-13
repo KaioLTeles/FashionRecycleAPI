@@ -35,7 +35,8 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                     NAME,
                                                                     EMAIL,                                                  
                                                                     ACTIVE,
-                                                                    CREATIONDATE
+                                                                    CREATIONDATE,
+                                                                    ROLEID
                                                              FROM [USER]
                                                              WHERE ID = @USERID", con))
                 {
@@ -51,7 +52,8 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                 result.Password = dt.Rows[i]["PASSWORD"].ToString();
                 result.Name = dt.Rows[i]["NAME"].ToString();
                 result.Email = dt.Rows[i]["EMAIL"].ToString();
-                result.Active = dt.Rows[i]["ACTIVE"].ToString() == "1" ? true : false;
+                result.Active = bool.Parse(dt.Rows[i]["ACTIVE"].ToString());
+                result.RoleId = int.Parse(dt.Rows[i]["ROLEID"].ToString());
                 result.CreationDate = DateTime.Parse(dt.Rows[i]["CREATIONDATE"].ToString());
 
             }
@@ -112,7 +114,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                 @PASSWORD, 
                                                 @NAME, 
                                                 @EMAIL, 
-                                                2, 
+                                                @ROLE, 
                                                 1, 
                                                 GETDATE(), 1)", con))
                 {
@@ -120,6 +122,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                     command.Parameters.Add("@PASSWORD", SqlDbType.VarChar).Value = userEntity.Password;
                     command.Parameters.Add("@NAME", SqlDbType.VarChar).Value = userEntity.Name;
                     command.Parameters.Add("@EMAIL", SqlDbType.VarChar).Value = userEntity.Email;
+                    command.Parameters.Add("@ROLE", SqlDbType.Int).Value = userEntity.RoleId;
                     command.ExecuteScalar();
                 }
 
@@ -132,7 +135,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
             {
                 DataTable dt = new DataTable();
                 con.Open();
-                using (SqlCommand command = new SqlCommand(@"UPDATE [USER] SET PASSWORD = @PASSWORD, FIRSTLOGIN = 0
+                using (SqlCommand command = new SqlCommand(@"UPDATE [USER] SET PASSWORD = @PASSWORD, FIRSTLOGIN = 1
                                                                     WHERE ID = @USERID", con))
                 {
                     command.Parameters.Add("@USERID", SqlDbType.Int).Value = userId;
@@ -142,25 +145,20 @@ namespace FashionRecycle.Infrastructure.Data.Repository
 
             }
         }
-        public void AlterUser(UserEntity userEntity, bool setFirtLogin)
+        public void AlterUser(UserEntity userEntity)
         {
-            string commandApend = string.Empty;
-
-            if (setFirtLogin)
-            {
-                commandApend = @"AND FIRSTLOGIN = 1 ";
-            }
-
+            
             using (SqlConnection con = new SqlConnection(_configuration["ConnectionStrings:Default"]))
             {
                 DataTable dt = new DataTable();
                 con.Open();
-                using (SqlCommand command = new SqlCommand(@"UPDATE [USER] SET PASSWORD = @PASSWORD, FIRSTLOGIN = 0" + commandApend +
-                                                                    "WHERE ID = @USERID", con))
-                {
-                    command.Parameters.Add("@PASSWORD", SqlDbType.VarChar).Value = userEntity.Password;
+                using (SqlCommand command = new SqlCommand(@"UPDATE [USER] SET NAME = @NAME, EMAIL = @EMAIL, ACTIVE = @ACTIVE, ROLEID = @ROLEID WHERE ID = @USERID", con))
+                {                    
                     command.Parameters.Add("@NAME", SqlDbType.VarChar).Value = userEntity.Name;
                     command.Parameters.Add("@EMAIL", SqlDbType.VarChar).Value = userEntity.Email;
+                    command.Parameters.Add("@ACTIVE", SqlDbType.Bit).Value = userEntity.Active;
+                    command.Parameters.Add("@USERID", SqlDbType.Int).Value = userEntity.Id;
+                    command.Parameters.Add("@ROLEID", SqlDbType.Int).Value = userEntity.RoleId;
                     command.ExecuteScalar();
                 }
 

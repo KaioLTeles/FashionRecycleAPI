@@ -39,12 +39,13 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                                       @IDPAYMENTMETHOD,
                                                                                       @OBSERVATION,
                                                                                       1,
-                                                                                      GETDATE()) SELECT TOP 1 ID FROM SALES ORDER BY [CREATIONDATE] DESC;", con, transaticon))
+                                                                                      GETDATE(), @NUMBERINSTALLMENTS) SELECT TOP 1 ID FROM SALES ORDER BY [CREATIONDATE] DESC;", con, transaticon))
                     {
                         command.Parameters.Add("@IDCLIENT", SqlDbType.Int).Value = salesEntity.IdClient;
                         command.Parameters.Add("@AMOUNTSALE", SqlDbType.Decimal).Value = salesEntity.AmountSale;
                         command.Parameters.Add("@IDPAYMENTMETHOD", SqlDbType.Int).Value = salesEntity.IdPaymentMethod;
                         command.Parameters.Add("@OBSERVATION", SqlDbType.VarChar).Value = salesEntity.Observation;
+                        command.Parameters.Add("@NUMBERINSTALLMENTS", SqlDbType.Int).Value = salesEntity.NumberInstallments;
                         dt.Load(command.ExecuteReader()); 
                     }
 

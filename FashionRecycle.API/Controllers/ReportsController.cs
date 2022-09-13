@@ -1,10 +1,12 @@
 ﻿using FashionRecycle.API.Core.InputModel;
 using FashionRecycle.API.Core.Interface;
 using FashionRecycle.Application.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FashionRecycle.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class ReportsController : ControllerBase
     {
@@ -46,17 +48,32 @@ namespace FashionRecycle.API.Controllers
         }
 
         [HttpGet("getAllSalesForCashFlow")]
-        public IActionResult GetAllSalesForCashFlow(string inicialDate, string finalDate, bool onlyRevenue, bool onlyExpense)
+        public IActionResult GetAllSalesForCashFlow(string inicialDate, string finalDate, bool onlyRevenue, bool onlyExpense, bool realFlow)
         {
             try
             {
-                var result = _reportBusiness.CashFlowReport(inicialDate, finalDate, onlyRevenue, onlyExpense);
+                var result = _reportBusiness.CashFlowReport(inicialDate, finalDate, onlyRevenue, onlyExpense, realFlow);
                 return Ok(result);
             }
             catch (Exception ex)
             {
                 Logger.WriteError("Erro ao buscar o relatório de fluxo de caixa - ", ex);
                 return BadRequest("Erro ao buscar o relatório de fluxo de caixa favor contactar a TI");
+            }
+        }
+
+        [HttpGet("getReciavableAllReport")]
+        public IActionResult GetReciavableAllReport(string inicialDate, string finalDate)
+        {
+            try
+            {
+                var result = _reportBusiness.GetReciavableAllReport(inicialDate, finalDate);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError("Erro ao buscar o relatório de contas a receber - ", ex);
+                return BadRequest("Erro ao buscar o relatório de contas a receber favor contactar a TI");
             }
         }
 

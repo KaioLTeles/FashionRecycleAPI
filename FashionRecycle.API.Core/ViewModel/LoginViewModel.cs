@@ -13,5 +13,6 @@ namespace FashionRecycle.API.Core.ViewModel
         public string Message { get; set; }
         public int LoginStatus { get; set; }
         public bool FirstLogin { get; set; }
+        public int RoleUser { get; set; }
     }
 }

@@ -17,5 +17,6 @@ namespace FashionRecycle.API.Core.ViewModel
         public string? CreationDateFormated { get; set; }
         public string? ProductDesciption { get; set; }
         public string? AlternativeId { get; set; }
+        public int NumberInstallments { get; set; }
     }
 }

@@ -17,14 +17,16 @@ namespace FashionRecycle.Application.Business
         private readonly IProductRepository _productRepository;
         public readonly IMapper _mapper;
         private readonly IPaymentBusiness _paymentBusiness;
+        private readonly IRecievablesBusiness _recievablesBusiness;
 
-        public SalesBusiness(ISalesRepository salesRepository, IMapper mapper, IProductRepository productRepository, IPaymentBusiness paymentBusiness)
+        public SalesBusiness(ISalesRepository salesRepository, IMapper mapper, IProductRepository productRepository, IPaymentBusiness paymentBusiness, IRecievablesBusiness recievablesBusiness)
         {
             _salesRepository = salesRepository;
             _mapper = mapper;
             _productRepository = productRepository;
             _paymentBusiness = paymentBusiness;
             _paymentBusiness = paymentBusiness;
+            _recievablesBusiness = recievablesBusiness;
         }
 
         public int CreateSale(CreateSaleInputModel inputModel)
@@ -52,6 +54,8 @@ namespace FashionRecycle.Application.Business
                     }
 
                     _paymentBusiness.CreatePaymentPartner(saleItemEntityList);
+
+                    _recievablesBusiness.CreateRecievableFromSale(saleEntity, saleId);
 
                     return saleId;
                 }

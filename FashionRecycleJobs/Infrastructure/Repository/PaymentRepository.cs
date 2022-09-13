@@ -1,16 +1,20 @@
 ﻿using FashionRecycle.API.Core.Entity;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace FashionRecycleJobs.Infrastructure.Repository
 {
     public class PaymentRepository
     {
+        private readonly IConfiguration _configuration;
+
+        public PaymentRepository(IConfiguration configuration)
+        {
+
+            _configuration = configuration;
+        }
+
         public List<PaymentsEntity> GetPaymentAllActive()
         {
             List<PaymentsEntity> result = new List<PaymentsEntity>();
@@ -20,14 +24,14 @@ namespace FashionRecycleJobs.Infrastructure.Repository
             using (SqlConnection con = new SqlConnection(_configuration["ConnectionStrings:Default"]))
             {
                 con.Open();
-                using (SqlCommand command = new SqlCommand(@"SELECT  A.ID,
-                                                                     A.NAME,
-                                                                     A.IDPAYMENTTYPE,
-                                                                     B.DESCRIPTION,
-                                                                     A.AMOUNT,
-                                                                     A.PAYMENTDATE,
-                                                                     A.PAYMENTMADE,
-                                                                     A.RECURRINGPATMENT
+                using (SqlCommand command = new SqlCommand(@"SELECT  ID,
+                                                                     NAME,
+                                                                     IDPAYMENTTYPE,
+                                                                     NAME,
+                                                                     AMOUNT,
+                                                                     PAYMENTDATE,
+                                                                     PAYMENTMADE,
+                                                                     RECURRINGPATMENT
                                                             FROM PAYMENTS
                                                             WHERE ACTIVE = 1", con))
                 {
@@ -45,13 +49,11 @@ namespace FashionRecycleJobs.Infrastructure.Repository
                     payments.Id = int.Parse(dt.Rows[i]["ID"].ToString());
                     payments.Name = dt.Rows[i]["NAME"].ToString();
                     payments.Amount = double.Parse(dt.Rows[i]["AMOUNT"].ToString());
-                    payments.PaymentDate = DateTime.Parse(dt.Rows[i]["PAYMENTDATE"].ToString());
-                    payments.Active = bool.Parse(dt.Rows[i]["ACTIVE"].ToString());
+                    payments.PaymentDate = DateTime.Parse(dt.Rows[i]["PAYMENTDATE"].ToString());                    
                     payments.PaymentMade = bool.Parse(dt.Rows[i]["PAYMENTMADE"].ToString());
                     payments.RecurringPayment = bool.Parse(dt.Rows[i]["RECURRINGPATMENT"].ToString());
 
-                    paymenyType.Id = int.Parse(dt.Rows[i]["IDPAYMENTTYPE"].ToString());
-                    paymenyType.Description = dt.Rows[i]["DESCRIPTION"].ToString();
+                    paymenyType.Id = int.Parse(dt.Rows[i]["IDPAYMENTTYPE"].ToString());                    
 
                     payments.PaymenyType = paymenyType;
 

@@ -17,7 +17,8 @@ namespace FashionRecycle.API.Configuration
             services.AddScoped<ISalesBusiness, SalesBusiness>();
             services.AddScoped<IPaymentBusiness, PaymentBusiness>();
             services.AddScoped<IReportBusiness, ReportBusiness>();
-            services.AddScoped<IBrandBusiness, BrandBusiness>();
+            services.AddScoped<IBrandBusiness, BrandBusiness>(); 
+            services.AddScoped<IRecievablesBusiness, RecievablesBusiness>();
 
 
             //Infraestructure.Data
@@ -29,7 +30,8 @@ namespace FashionRecycle.API.Configuration
             services.AddScoped<ISalesRepository, SalesRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
-            services.AddScoped<IBrandRepository, BrandRepository>();
+            services.AddScoped<IBrandRepository, BrandRepository>(); 
+            services.AddScoped<IRecievablesRepository, RecievablesRepository>();
 
 
             return services;

@@ -22,5 +22,6 @@ namespace FashionRecycle.API.Core.InputModel
         public string? observation { get; set; }
         public int brandId { get; set; }
         public double margim { get; set; }
+        public int numberInstallments { get; set; }
     }
 }

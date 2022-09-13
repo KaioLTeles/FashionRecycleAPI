@@ -13,5 +13,6 @@ namespace FashionRecycle.API.Core.Entity
         public int IdPaymentMethod { get; set; }
         public string? Observation { get; set; }
         public bool Active { get; set; }
+        public int NumberInstallments { get; set; }
     }
 }

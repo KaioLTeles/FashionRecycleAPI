@@ -118,7 +118,7 @@ namespace FashionRecycle.Application.Business
                     PaymentDate = DateTime.Now.AddDays(7),
                     Active = true,
                     Name = "Pagamento de Comissão De Fornecedor - " + partner.Name + " - Produto " + product.AlternativeId + " - " + product.Name + " " + product.Model,
-                    Amount = item.PriceSale
+                    Amount = product.PricePartner
                 };
 
                 _paymentRepository.CreatePayment(entity);

@@ -56,6 +56,17 @@ namespace FashionRecycle.Application.Business
                     {
 
                         entity.CreationDateFormat = entity.CreationDate.ToString("dd/MM/yyyy");
+                        if(entity.ProductStatus == 1)
+                        {
+                            entity.ProductStatusDescription = "Disponivel";
+                        } else if( entity.ProductStatus == 2)
+                        {
+                            entity.ProductStatusDescription = "Vendido";
+                        }
+                        else
+                        {
+                            entity.ProductStatusDescription = "Devolvido";
+                        }
                         resultList.Add(entity);
                     }
                 }

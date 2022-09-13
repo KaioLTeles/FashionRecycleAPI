@@ -1,4 +1,5 @@
-﻿using FashionRecycle.API.Core.InputModel;
+﻿using FashionRecycle.API.Core.Entity;
+using FashionRecycle.API.Core.InputModel;
 using FashionRecycle.API.Core.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,9 @@ namespace FashionRecycle.API.Core.Interface
         List<ReportAllSalesResumedViewModel> GetAllSalesResumed(ReportSalesInputModel inputModel);
         List<ReportAllPaymentsViewModel> GellAllPaymentsReport(string inicialDate, string finalDate, int idPaymentType, int filtertype);
         public double GetInicialAmout();
-        List<AllPaymentsCashFlowViewModel> GetAllPaymentsCashFlow(string inicialDate, string finalDate);
-        List<AllSalesForCashFlowViewModel> GetAllSalesForCashFlow(string inicialDate, string finalDate);
+        List<AllPaymentsCashFlowViewModel> GetAllPaymentsCashFlow(string inicialDate, string finalDate, bool realFlow);
+        List<AllSalesForCashFlowViewModel> GetAllSalesForCashFlow(string inicialDate, string finalDate, bool realFlow);
+        List<RecievableEntity> GetReciavableAllReport(string inicialDate, string finalDate);
 
 
     }

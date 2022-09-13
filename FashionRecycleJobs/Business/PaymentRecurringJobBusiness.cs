@@ -1,10 +1,6 @@
 ﻿using FashionRecycle.API.Core.Entity;
 using FashionRecycleJobs.Infrastructure.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using FashionRecycleJobs.Utils;
 
 namespace FashionRecycleJobs.Business
 {
@@ -12,13 +8,17 @@ namespace FashionRecycleJobs.Business
     {
         public void StartProcess()
         {
+            ConfigApp configApp = new ConfigApp();
+
+            var config = configApp.ConfigConection();
+
             try
             {
                 if (ValidadeRowJob())
                 {
                     Console.WriteLine("Buscando lista de pagamentos recorrentes");
 
-                    PaymentRepository repository = new PaymentRepository();
+                    PaymentRepository repository = new PaymentRepository(config);
 
                     var payments = repository.GetPaymentAllActive();
 

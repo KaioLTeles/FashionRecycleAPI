@@ -16,5 +16,6 @@ namespace FashionRecycle.API.Core.Interface
         void ResetPassword(int userId, string password);
         List<UserEntity> GetAllUserByFilter(string name, string email);
         UserEntity GetUser(int id);
+        void AlterUser(AlterUserInputModel inputModel);
     }
 }

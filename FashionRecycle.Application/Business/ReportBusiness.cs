@@ -1,4 +1,5 @@
-﻿using FashionRecycle.API.Core.InputModel;
+﻿using FashionRecycle.API.Core.Entity;
+using FashionRecycle.API.Core.InputModel;
 using FashionRecycle.API.Core.Interface;
 using FashionRecycle.API.Core.ViewModel;
 using System;
@@ -41,15 +42,15 @@ namespace FashionRecycle.Application.Business
             return resultList;
         }
 
-        public List<CashFlowReportViewModel> CashFlowReport(string inicialDate, string finalDate, bool onlyRevenue, bool onlyExpense)
+        public List<CashFlowReportViewModel> CashFlowReport(string inicialDate, string finalDate, bool onlyRevenue, bool onlyExpense, bool realFlow)
         {
             List <CashFlowReportViewModel> resultList = new List <CashFlowReportViewModel>();
 
             if (onlyRevenue == true && onlyExpense == true)
             {
-                var sales = _reportRepository.GetAllSalesForCashFlow(inicialDate, finalDate);
+                var sales = _reportRepository.GetAllSalesForCashFlow(inicialDate, finalDate, realFlow);
 
-                var payments = _reportRepository.GetAllPaymentsCashFlow(inicialDate, finalDate);
+                var payments = _reportRepository.GetAllPaymentsCashFlow(inicialDate, finalDate, realFlow);
 
                 var balance = _reportRepository.GetInicialAmout();
 
@@ -67,8 +68,8 @@ namespace FashionRecycle.Application.Business
                 {
                     CashFlowReportViewModel entity = new CashFlowReportViewModel();
 
-                    AmountTotalExpense = AmountTotalExpense + payment.AmountPayment;
-                    BalanceLeft = BalanceLeft - AmountTotalExpense;
+                    //AmountTotalExpense = AmountTotalExpense + payment.AmountPayment;
+                    BalanceLeft = BalanceLeft - payment.AmountPayment;
                     entity.RowDate = payment.PaymentDate;
                     entity.RowDateText = payment.PaymentDate.ToString("dd/MM/yyyy");
                     entity.ValueExpense = payment.AmountPayment;
@@ -94,7 +95,7 @@ namespace FashionRecycle.Application.Business
             else if(onlyExpense == true)
             {                
 
-                var payments = _reportRepository.GetAllPaymentsCashFlow(inicialDate, finalDate);
+                var payments = _reportRepository.GetAllPaymentsCashFlow(inicialDate, finalDate, realFlow);
 
                 var balance = _reportRepository.GetInicialAmout();
 
@@ -123,7 +124,7 @@ namespace FashionRecycle.Application.Business
             }
             else if (onlyRevenue)
             {
-                var sales = _reportRepository.GetAllSalesForCashFlow(inicialDate, finalDate);
+                var sales = _reportRepository.GetAllSalesForCashFlow(inicialDate, finalDate, realFlow);
                 
 
                 var balance = _reportRepository.GetInicialAmout();
@@ -151,9 +152,15 @@ namespace FashionRecycle.Application.Business
                     resultList.Add(entity);
                 }
             }
-            
+
+            resultList.OrderBy(x => x.RowDate);
 
             return resultList;
+        }
+
+        public List<RecievableEntity> GetReciavableAllReport(string inicialDate, string finalDate)
+        {
+            return _reportRepository.GetReciavableAllReport(inicialDate, finalDate);
         }
     }
 }

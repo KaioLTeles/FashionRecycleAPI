@@ -34,14 +34,29 @@ namespace FashionRecycle.API.Controllers
             }
         }
 
-        [AllowAnonymous]
         [HttpPost("createUser")]
-        public IActionResult CreateUser(CreateUserInputModel createUserInputModel)
+        public IActionResult CreateUser([FromBody] CreateUserInputModel createUserInputModel)
                 {
             try
             {
                 _userBusiness.CreateUser(createUserInputModel);
                 string msg = "Usuario " + createUserInputModel.Name + " criado com sucesso!";
+                return Ok(msg);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteError("Erro ao criar usuario - ", ex);
+                return BadRequest("Erro ao criar usuario favor contactar a TI");
+            }
+        }
+
+        [HttpPost("alterUser")]
+        public IActionResult AlterUser([FromBody] AlterUserInputModel alterUserInputModel)
+        {
+            try
+            {
+                _userBusiness.AlterUser(alterUserInputModel);
+                string msg = "Usuario " + alterUserInputModel.name + " criado com sucesso!";
                 return Ok(msg);
             }
             catch (Exception ex)
@@ -65,8 +80,7 @@ namespace FashionRecycle.API.Controllers
                 return BadRequest("Erro ao logar favor contactar a TI");
             }
         }
-
-        [AllowAnonymous]
+        
         [HttpGet("getAllUserByFilter")]
         public IActionResult GetAllUserByFilter(string name, string email)
         {            

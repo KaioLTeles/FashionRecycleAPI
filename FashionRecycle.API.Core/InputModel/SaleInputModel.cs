@@ -12,5 +12,6 @@ namespace FashionRecycle.API.Core.ViewModel
         public double AmountSale { get; set; }
         public int IdPaymentMethod { get; set; }
         public string? Observation { get; set; }
+        public int NumberInstallments { get; set; }
     }
 }

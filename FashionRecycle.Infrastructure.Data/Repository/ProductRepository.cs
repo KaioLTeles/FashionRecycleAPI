@@ -127,7 +127,8 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                      A.SERIALNUMBER,
                                                                      A.MODEL,
                                                                      A.COLOUR,
-                                                                     A.MARGIM
+                                                                     A.MARGIM,
+                                                                     A.PRODUCTSTATUS
                                                             FROM PRODUCT A
                                                             INNER JOIN [PARTNER] B
                                                             ON A.IDPARTNER = B.ID
@@ -165,6 +166,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                     entity.Active = bool.Parse(dt.Rows[i]["ACTIVE"].ToString());
                     entity.CreationDate = DateTime.Parse(dt.Rows[i]["CREATIONDATE"].ToString());
                     entity.Margim = double.Parse(dt.Rows[i]["MARGIM"].ToString());
+                    entity.ProductStatus = int.Parse(dt.Rows[i]["PRODUCTSTATUS"].ToString());
 
                     partnerEntity.Id = int.Parse(dt.Rows[i]["IDPARTNER"].ToString());
                     partnerEntity.Name = dt.Rows[i]["NAMEPARTNER"].ToString();
@@ -235,7 +237,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                                        SERIALNUMBER = @SERIALNUMBER,                                                                                        
                                                                                        MODEL = @MODEL,
                                                                                        COLOUR = @COLOUR,
-                                                                                       OBSERVATION = @OBSERVATION
+                                                                                       OBSERVATION = @OBSERVATION,
                                                                                        MARGIM = @MARGIM
                                                                     WHERE ID = @PRODUCTID", con))
                 {

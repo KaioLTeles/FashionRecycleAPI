@@ -6,6 +6,7 @@ using FashionRecycle.Application.Utils;
 
 namespace FashionRecycle.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class PartnerController : ControllerBase
     {

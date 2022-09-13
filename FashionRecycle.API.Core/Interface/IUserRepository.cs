@@ -9,7 +9,7 @@ namespace FashionRecycle.API.Core.Interface
 {
     public interface IUserRepository
     {
-        void AlterUser(UserEntity userEntity, bool setFirtLogin);
+        void AlterUser(UserEntity userEntity);
         void CreateUser(UserEntity userEntity);
         UserEntity GetUserById(int id);
         UserEntity GetUserByUserName(string userName);

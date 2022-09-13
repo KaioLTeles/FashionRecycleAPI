@@ -1,11 +1,13 @@
 ﻿using FashionRecycle.API.Core.InputModel;
 using FashionRecycle.API.Core.Interface;
 using FashionRecycle.Application.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FashionRecycle.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("api/[controller]")] 
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentBusiness _paymentBusiness;

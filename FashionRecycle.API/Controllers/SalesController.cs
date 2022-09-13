@@ -1,10 +1,12 @@
 ﻿using FashionRecycle.API.Core.Interface;
 using FashionRecycle.API.Core.ViewModel;
 using FashionRecycle.Application.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FashionRecycle.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class SalesController : ControllerBase
     {

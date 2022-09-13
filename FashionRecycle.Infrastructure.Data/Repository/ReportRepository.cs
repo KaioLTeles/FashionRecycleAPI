@@ -39,6 +39,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                      A.IDPAYMENTMETHOD, 
                                                                      C.DESCRIPTION,                                                                      
                                                                      A.CREATIONDATE,
+                                                                     A.NUMBERINSTALLMENTS,
                                                                      D.IDPARTNER,
                                                                      A.ACTIVE,
                                                                      D.IDPRODUCT,
@@ -78,6 +79,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
 
 
                     entity.Id = int.Parse(dt.Rows[i]["ID"].ToString());
+                    entity.NumberInstallments = int.Parse(dt.Rows[i]["NUMBERINSTALLMENTS"].ToString());
                     entity.NameClient = dt.Rows[i]["NAME"].ToString();
                     entity.ProductDesciption = dt.Rows[i]["NAMEPRODUCT"].ToString();
                     entity.AlternativeId = dt.Rows[i]["ALTERNATIVE_ID"].ToString();
@@ -169,8 +171,16 @@ namespace FashionRecycle.Infrastructure.Data.Repository
             return result;
         }
 
-        public List<AllSalesForCashFlowViewModel> GetAllSalesForCashFlow(string inicialDate, string finalDate)
+        public List<AllSalesForCashFlowViewModel> GetAllSalesForCashFlow(string inicialDate, string finalDate, bool realFlow)
         {
+
+            string commandApend = string.Empty;
+
+            if (realFlow)
+            {
+                commandApend = @"AND STATUS = 1";
+            }
+
             List<AllSalesForCashFlowViewModel> result = new List<AllSalesForCashFlowViewModel>();
 
             DataTable dt = new DataTable();
@@ -178,7 +188,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
             using (SqlConnection con = new SqlConnection(_configuration["ConnectionStrings:Default"]))
             {
                 con.Open();
-                using (SqlCommand command = new SqlCommand(@"SELECT CAST(CREATIONDATE AS DATE) AS CREATIONDATE, SUM(AMOUNTSALE) AS AMOUNTSALE FROM [dbo].[SALES]  WHERE CAST(CREATIONDATE AS DATE) BETWEEN CAST(@INICIALDATE AS DATE) AND CAST(@FINALDATE AS DATE) GROUP BY CAST(CREATIONDATE AS DATE)", con))
+                using (SqlCommand command = new SqlCommand(@"SELECT CAST(RECIEVEDATE AS DATE) AS RECIEVEDATE, SUM(AMOUNT) AS AMOUNT FROM [RECEIVABLES]  WHERE CAST(RECIEVEDATE AS DATE) BETWEEN CAST(@INICIALDATE AS DATE) AND CAST(@FINALDATE AS DATE) AND ACTIVE = 1 " + commandApend + " GROUP BY CAST(RECIEVEDATE AS DATE)", con))
                 {
                     command.Parameters.Add("@INICIALDATE", SqlDbType.DateTime).Value = inicialDate == "" ? DBNull.Value : DateTime.Parse(inicialDate, CultureInfo.InvariantCulture);
                     command.Parameters.Add("@FINALDATE", SqlDbType.DateTime).Value = finalDate == "" ? DBNull.Value : DateTime.Parse(finalDate, CultureInfo.InvariantCulture);
@@ -193,9 +203,9 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                     AllSalesForCashFlowViewModel entity = new AllSalesForCashFlowViewModel();
 
 
-                    entity.AmountSale = double.Parse(dt.Rows[i]["AMOUNTSALE"].ToString());
+                    entity.AmountSale = double.Parse(dt.Rows[i]["AMOUNT"].ToString());
 
-                    entity.SaleDate = DateTime.Parse(dt.Rows[i]["CREATIONDATE"].ToString());
+                    entity.SaleDate = DateTime.Parse(dt.Rows[i]["RECIEVEDATE"].ToString());
 
                     entity.SaleDateText = entity.SaleDate.ToString("dd/MM/yyyy");
 
@@ -208,8 +218,15 @@ namespace FashionRecycle.Infrastructure.Data.Repository
             return result;
         }
 
-        public List<AllPaymentsCashFlowViewModel> GetAllPaymentsCashFlow(string inicialDate, string finalDate)
+        public List<AllPaymentsCashFlowViewModel> GetAllPaymentsCashFlow(string inicialDate, string finalDate, bool realFlow)
         {
+            string commandApend = string.Empty;
+
+            if (realFlow)
+            {
+                commandApend = @"AND PAYMENTMADE = 1";
+            }
+
             List<AllPaymentsCashFlowViewModel> result = new List<AllPaymentsCashFlowViewModel>();
 
             DataTable dt = new DataTable();
@@ -217,7 +234,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
             using (SqlConnection con = new SqlConnection(_configuration["ConnectionStrings:Default"]))
             {
                 con.Open();
-                using (SqlCommand command = new SqlCommand(@"SELECT CAST(CREATIONDATE AS DATE) AS CREATIONDATE, SUM(AMOUNT) AS AMOUNT FROM [dbo].[PAYMENTS]  WHERE CAST(CREATIONDATE AS DATE) BETWEEN CAST(@INICIALDATE AS DATE) AND CAST(@FINALDATE AS DATE) GROUP BY CAST(CREATIONDATE AS DATE)", con))
+                using (SqlCommand command = new SqlCommand(@"SELECT CAST(PAYMENTDATE AS DATE) AS CREATIONDATE, SUM(AMOUNT) AS AMOUNT FROM [dbo].[PAYMENTS]  WHERE CAST(PAYMENTDATE AS DATE) BETWEEN CAST(@INICIALDATE AS DATE) AND CAST(@FINALDATE AS DATE) AND ACTIVE = 1 " + commandApend + " GROUP BY CAST(PAYMENTDATE AS DATE)", con))
                 {
                     command.Parameters.Add("@INICIALDATE", SqlDbType.DateTime).Value = inicialDate == "" ? DBNull.Value : DateTime.Parse(inicialDate, CultureInfo.InvariantCulture);
                     command.Parameters.Add("@FINALDATE", SqlDbType.DateTime).Value = finalDate == "" ? DBNull.Value : DateTime.Parse(finalDate, CultureInfo.InvariantCulture);
@@ -240,6 +257,65 @@ namespace FashionRecycle.Infrastructure.Data.Repository
 
 
                     result.Add(entity);
+                }
+
+            }
+
+            return result;
+        }
+
+        public List<RecievableEntity> GetReciavableAllReport(string inicialDate, string finalDate)
+        {
+            List<RecievableEntity> result = new List<RecievableEntity>();
+
+            DataTable dt = new DataTable();
+
+            using (SqlConnection con = new SqlConnection(_configuration["ConnectionStrings:Default"]))
+            {
+                con.Open();
+                using (SqlCommand command = new SqlCommand(@"SELECT  A.ID,                                                                     
+                                                                     A.NAME,                                                                                                                                   
+                                                                     A.IDCLIENT,
+                                                                     A.IDSALE,
+                                                                     A.AMOUNT,
+                                                                     A.SALEDATE,
+                                                                     A.RECIEVEDATE,                                           
+                                                                     A.STATUS,
+                                                                     A.ACTIVE,
+                                                                     A.CREATIONDATE,
+                                                                     B.NAME AS NAMECLIENT
+                                                            FROM RECEIVABLES A                                                           
+                                                            INNER JOIN CLIENT B
+                                                            ON A.IDCLIENT = B.ID
+                                                             WHERE CAST(A.RECIEVEDATE AS DATE) BETWEEN   CAST(@INICIALDATE AS DATE) AND CAST(@FINALDATE AS DATE) AND A.ACTIVE = 1", con))
+                {
+                    command.Parameters.Add("@INICIALDATE", SqlDbType.DateTime).Value = inicialDate == "" ? DBNull.Value : DateTime.Parse(inicialDate, CultureInfo.InvariantCulture);
+                    command.Parameters.Add("@FINALDATE", SqlDbType.DateTime).Value = finalDate == "" ? DBNull.Value : DateTime.Parse(finalDate, CultureInfo.InvariantCulture);                    
+                    dt.Load(command.ExecuteReader());
+                }
+
+            }
+            if (dt.Rows.Count > 0)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    RecievableEntity recievable = new RecievableEntity();
+
+                    recievable.Id = int.Parse(dt.Rows[i]["ID"].ToString());
+                    recievable.Name = dt.Rows[i]["NAME"].ToString();
+                    recievable.Amout = double.Parse(dt.Rows[i]["AMOUNT"].ToString());
+                    recievable.RecieveDate = DateTime.Parse(dt.Rows[i]["RECIEVEDATE"].ToString());
+                    recievable.SaleDate = DateTime.Parse(dt.Rows[i]["SALEDATE"].ToString());
+                    recievable.CreationDate = DateTime.Parse(dt.Rows[i]["CREATIONDATE"].ToString());
+                    recievable.Active = bool.Parse(dt.Rows[i]["ACTIVE"].ToString());
+                    recievable.Status = bool.Parse(dt.Rows[i]["STATUS"].ToString());
+                    recievable.ClientName = dt.Rows[i]["NAMECLIENT"].ToString();
+
+                    recievable.SaleDateFormated = recievable.SaleDate.ToString("dd/MM/yyyy");
+                    recievable.RecieveDateFormated = recievable.RecieveDate.ToString("dd/MM/yyyy");
+
+
+                    result.Add(recievable);
                 }
 
             }
