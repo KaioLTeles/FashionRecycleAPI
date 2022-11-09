@@ -32,7 +32,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                 using (SqlCommand command = new SqlCommand(@"SELECT  ID,
                                                                      [NAME]                                                                  
                                                             FROM [BRAND]
-                                                            WHERE ACTIVE = 1", con))
+                                                            WHERE ACTIVE = 1 ORDER BY [NAME]", con))
                 {                    
                     dt.Load(command.ExecuteReader());
                 }

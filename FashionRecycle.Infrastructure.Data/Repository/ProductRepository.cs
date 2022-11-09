@@ -136,7 +136,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                             ON A.BRANDID = C.ID
                                                              WHERE (@PRODUCTID IS NULL OR A.ALTERNATIVE_ID = @PRODUCTID)
                                                              AND (@IDPARTNER IS NULL OR A.IDPARTNER = @IDPARTNER)
-                                                             AND (@IDBRAND IS NULL OR A.BRANDID = @IDBRAND)", con))
+                                                             AND (@IDBRAND IS NULL OR A.BRANDID = @IDBRAND) ORDER BY ALTERNATIVE_ID", con))
                 {
                     command.Parameters.Add("@PRODUCTID", SqlDbType.VarChar).Value = productId == "" ? DBNull.Value : productId;
                     command.Parameters.Add("@IDPARTNER", SqlDbType.Int).Value = idPartner == 0 ? DBNull.Value : idPartner;
@@ -375,10 +375,13 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                      B.[NAME] AS NAMEPARTNER,
                                                                      A.AMOUNTINVENTORY,
                                                                      A.ALTERNATIVE_ID,
-                                                                     A.MODEL
+                                                                     A.MODEL,
+                                                                     C.NAME AS BRANDNAME
                                                             FROM PRODUCT A
-                                                            INNER JOIN [PARTNER] B
-                                                            ON A.IDPARTNER = B.ID                                                        
+                                                            INNER JOIN [PARTNER] B                                                            
+                                                            ON A.IDPARTNER = B.ID 
+                                                            INNER JOIN [BRAND] C
+                                                            ON C.ID = A.BRANDID
                                                             WHERE A.ACTIVE = 1 AND A.PRODUCTSTATUS = 1 AND A.IDPARTNER = @IDPARTNER", con))
                 {
                     command.Parameters.Add("@IDPARTNER", SqlDbType.Int).Value = partnerId;
@@ -407,7 +410,7 @@ namespace FashionRecycle.Infrastructure.Data.Repository
 
                     entity.Partner = partnerEntity;
 
-                    entity.Name = entity.AlternativeId + "-" + entity.Name + "-" + entity.Model;
+                    entity.Name = entity.AlternativeId + "-" + entity.Name + "-" + entity.Model + "-" + dt.Rows[i]["BRANDNAME"].ToString();
 
                     result.Add(entity);
                 }
