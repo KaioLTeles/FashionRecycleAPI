@@ -56,7 +56,13 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                      A.OBSERVATION,
                                                                      A.BRANDID,
                                                                      A.PRODUCTSTATUS,
-                                                                     A.MARGIM
+                                                                     A.MARGIM,
+                                                                     A.CONTENT,
+                                                                     A.APPROVALDATE,
+                                                                     A.SIZE,
+                                                                     A.SIZE_BR,
+                                                                     A.SIZE_SOLA,
+                                                                     A.ITEMRELATED
                                                             FROM PRODUCT A
                                                             INNER JOIN [PARTNER] B
                                                             ON A.IDPARTNER = B.ID
@@ -84,7 +90,12 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                 result.Model = dt.Rows[0]["MODEL"].ToString();
                 result.Colour = dt.Rows[0]["COLOUR"].ToString();
                 result.Observation = dt.Rows[0]["OBSERVATION"].ToString();
-                result.Margim = double.Parse(dt.Rows[0]["MARGIM"].ToString());
+                result.Margim = double.Parse(dt.Rows[0]["MARGIM"].ToString());                                                                                     
+                result.ApprovalDate = dt.Rows[0]["APPROVALDATE"].ToString();
+                result.Size = dt.Rows[0]["SIZE"].ToString();
+                result.Size_BR = dt.Rows[0]["SIZE_BR"].ToString();
+                result.Size_Sola = dt.Rows[0]["SIZE_SOLA"].ToString();
+                result.ItemRelated = dt.Rows[0]["ITEMRELATED"].ToString();
 
                 partnerEntity.Id = int.Parse(dt.Rows[0]["IDPARTNER"].ToString());
                 partnerEntity.Name = dt.Rows[0]["NAMEPARTNER"].ToString();
@@ -202,7 +213,13 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                                         @OBSERVATION,
                                                                                         @ALTERNATIVE_ID,
                                                                                         @BRANDID,
-                                                                                        @MARGIM)", con))
+                                                                                        @MARGIM,
+                                                                                        @APPROVALDATE,
+                                                                                        @CONTENT,
+                                                                                        @SIZE,
+                                                                                        @SIZE_BR,
+                                                                                        @SIZE_SOLA,
+                                                                                        @ITEMRELATED)", con))
                 {
                     command.Parameters.Add("@NAME", SqlDbType.VarChar).Value = productEntity.Name == null || productEntity.Name == string.Empty ? DBNull.Value : productEntity.Name;                                 
                     command.Parameters.Add("@PRICEPARTNER", SqlDbType.Decimal).Value = productEntity.PricePartner;
@@ -217,6 +234,12 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                     command.Parameters.Add("@MODEL", SqlDbType.VarChar).Value = productEntity.Model == null || productEntity.Model == string.Empty ? DBNull.Value : productEntity.Model;
                     command.Parameters.Add("@BRANDID", SqlDbType.Int).Value = productEntity.BrandId;
                     command.Parameters.Add("@MARGIM", SqlDbType.Decimal).Value = productEntity.Margim;
+                    command.Parameters.Add("@APPROVALDATE", SqlDbType.DateTime).Value = DateTime.Parse(productEntity.ApprovalDate);
+                    command.Parameters.Add("@CONTENT", SqlDbType.VarBinary).Value = productEntity.Content;
+                    command.Parameters.Add("@SIZE", SqlDbType.VarChar).Value = productEntity.Size;
+                    command.Parameters.Add("@SIZE_BR", SqlDbType.VarChar).Value = productEntity.Size_BR;
+                    command.Parameters.Add("@SIZE_SOLA", SqlDbType.VarChar).Value = productEntity.Size_Sola;
+                    command.Parameters.Add("@ITEMRELATED", SqlDbType.VarChar).Value = productEntity.ItemRelated;
                     command.ExecuteNonQuery();
                 }
             }
@@ -238,7 +261,13 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                                                                                        MODEL = @MODEL,
                                                                                        COLOUR = @COLOUR,
                                                                                        OBSERVATION = @OBSERVATION,
-                                                                                       MARGIM = @MARGIM
+                                                                                       MARGIM = @MARGIM,
+                                                                                       APPROVALDATE = @APPROVALDATE,
+                                                                                       Content = @Content,
+                                                                                       Size = @Size,
+                                                                                       Size_BR = @Size_BR,
+                                                                                       Size_Solo = @Size_Solo,
+                                                                                       ItemRelated = @ItemRelated
                                                                     WHERE ID = @PRODUCTID", con))
                 {
 
@@ -255,6 +284,12 @@ namespace FashionRecycle.Infrastructure.Data.Repository
                     command.Parameters.Add("@OBSERVATION", SqlDbType.VarChar).Value = productEntity.Observation == null || productEntity.Observation == string.Empty ? DBNull.Value : productEntity.Observation;
                     command.Parameters.Add("@MODEL", SqlDbType.VarChar).Value = productEntity.Model;
                     command.Parameters.Add("@MARGIM", SqlDbType.Decimal).Value = productEntity.Margim;
+                    command.Parameters.Add("@APPROVALDATE", SqlDbType.DateTime).Value = DateTime.Parse(productEntity.ApprovalDate);
+                    command.Parameters.Add("@CONTENT", SqlDbType.VarBinary).Value = productEntity.Content;
+                    command.Parameters.Add("@SIZE", SqlDbType.VarChar).Value = productEntity.Size;
+                    command.Parameters.Add("@SIZE_BR", SqlDbType.VarChar).Value = productEntity.Size_BR;
+                    command.Parameters.Add("@SIZE_SOLA", SqlDbType.VarChar).Value = productEntity.Size_Sola;
+                    command.Parameters.Add("@ITEMRELATED", SqlDbType.VarChar).Value = productEntity.ItemRelated;
                     command.ExecuteNonQuery();
                 }
             }

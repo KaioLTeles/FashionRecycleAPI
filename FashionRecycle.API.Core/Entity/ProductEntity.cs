@@ -24,5 +24,11 @@ namespace FashionRecycle.API.Core.Entity
         public int BrandId { get; set; }
         public bool Active { get; set; }
         public double Margim { get; set; }
+        public string? Content { get; set; }
+        public string? Size { get; set; }
+        public string? Size_BR { get; set; }
+        public string? Size_Sola { get; set; }
+        public string? ItemRelated { get; set; }
+        public string? ApprovalDate { get; set; }
     }
 }

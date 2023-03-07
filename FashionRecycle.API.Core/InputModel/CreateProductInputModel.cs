@@ -21,7 +21,13 @@ namespace FashionRecycle.API.Core.InputModel
         public string? colour { get; set; }
         public string? observation { get; set; }
         public int brandId { get; set; }
-        public double margim { get; set; }
-        public int numberInstallments { get; set; }
+        public double margim { get; set; }       
+        public string? Content { get; set; }
+        public string? Size { get; set; }
+        public string? Size_BR { get; set; }
+        public string? Size_Sola { get; set; }
+        public string? ItemRelated { get; set; }
+        public string? ApprovalDate { get; set; }
+        public string? FileName { get; set; }
     }
 }
